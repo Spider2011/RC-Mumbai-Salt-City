@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Inter, Space_Grotesk, Tiro_Devanagari_Sanskrit } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { SITE } from '@/lib/constants';
 import { SmoothScroll } from '@/components/effects/SmoothScroll';
@@ -81,6 +82,7 @@ export default function RootLayout({
             <main className="relative z-[10]">{children}</main>
           </PageTransition>
         </SmoothScroll>
+        <Analytics />
       </body>
     </html>
   );
