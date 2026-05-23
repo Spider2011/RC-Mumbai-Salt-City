@@ -43,7 +43,7 @@ export default function TeamPage() {
   return (
     <>
       <PageHeader
-        eyebrow={`Board of Directors · ${SITE.year}`}
+        eyebrow={`Core Team · ${SITE.year}`}
         sanskrit="नेतृत्व"
         title={
           <>
