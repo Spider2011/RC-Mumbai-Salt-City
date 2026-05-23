@@ -9,7 +9,7 @@ import type { TeamMember } from '@/types';
 
 export const metadata: Metadata = {
   title: 'Team',
-  description: `Board of Directors ${SITE.year} — ${SITE.name}.`,
+  description: `Core Team ${SITE.year} — ${SITE.name}.`,
 };
 
 // Avatars use a CSS background-image (samples the full 640px source — no upscaling blur).
