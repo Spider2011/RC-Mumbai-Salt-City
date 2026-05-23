@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ScrollReveal } from '@/components/effects/ScrollReveal';
@@ -12,17 +13,17 @@ export const metadata: Metadata = {
   description: `Board of Directors ${SITE.year} — ${SITE.name}.`,
 };
 
-// TODO: add board photos to /public/images/team/ and wire into the avatar slot
+// Photos live in /public/images/team/ (lowercase names for case-safe Linux/Vercel paths).
 const BOARD: TeamMember[] = [
-  { name: 'Tanish Momaya', role: 'President', bio: 'Leading the year of Aant Asti Prarambh.' },
-  { name: 'Kashvi Kothari', role: 'Secretary' },
-  { name: 'Romil Lodaya', role: 'Vice President' },
-  { name: 'Hriday Kataria', role: 'Vice President' },
-  { name: 'Krisha Panchal', role: 'Joint Secretary' },
-  { name: 'Shreedhee Ved', role: 'Joint Secretary' },
-  { name: 'Aayush Shah', role: 'Sergeant At Arms' },
-  { name: 'Hiya Doshi', role: 'HRD' },
-  { name: 'Yash Thakkar', role: 'Treasurer' },
+  { name: 'Tanish Momaya', role: 'President', image: '/images/team/tanish.png', bio: 'Leading the year of Aant Asti Prarambh.' },
+  { name: 'Kashvi Kothari', role: 'Secretary', image: '/images/team/kashvi.jpg' },
+  { name: 'Romil Lodaya', role: 'Vice President', image: '/images/team/romil.jpg' },
+  { name: 'Hriday Kataria', role: 'Vice President', image: '/images/team/hriday.jpg' },
+  { name: 'Krisha Panchal', role: 'Joint Secretary', image: '/images/team/krisha.jpg' },
+  { name: 'Shreedhee Ved', role: 'Joint Secretary', image: '/images/team/shreedhee.jpg' },
+  { name: 'Aayush Shah', role: 'Sergeant At Arms', image: '/images/team/aayush.jpg' },
+  { name: 'Hiya Doshi', role: 'HRD' }, // TODO: add photo when available
+  { name: 'Yash Thakkar', role: 'Treasurer', image: '/images/team/yash.jpg' },
 ];
 
 function initials(name: string): string {
@@ -56,16 +57,26 @@ export default function TeamPage() {
                 className="flex h-full flex-col items-center p-8 text-center"
                 glowColor={member.role === 'President' ? '#D4AF37' : '#845EC2'}
               >
-                {/* Avatar placeholder — replace with Next/Image from /public/images/team/ */}
+                {/* Avatar: photo if available, else initials fallback */}
                 <div
-                  className="flex h-24 w-24 items-center justify-center rounded-full border border-white/15"
+                  className="relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-white/15"
                   style={{
                     background: 'linear-gradient(135deg, rgba(132,94,194,0.25), rgba(44,115,210,0.25))',
                   }}
                 >
-                  <span className="font-display text-2xl text-[var(--text-primary)]">
-                    {initials(member.name)}
-                  </span>
+                  {member.image ? (
+                    <Image
+                      src={member.image}
+                      alt={`${member.name}, ${member.role}`}
+                      fill
+                      sizes="96px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span className="font-display text-2xl text-[var(--text-primary)]">
+                      {initials(member.name)}
+                    </span>
+                  )}
                 </div>
                 <h3 className="font-display mt-5 text-2xl font-medium text-[var(--text-primary)]">
                   {member.name}
