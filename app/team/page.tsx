@@ -13,10 +13,15 @@ export const metadata: Metadata = {
   description: `Board of Directors ${SITE.year} — ${SITE.name}.`,
 };
 
+// Member with optional avatar framing controls.
+//  - imagePosition: CSS object-position focal point (e.g. '50% 20%' biases toward the head)
+//  - imageScale: zoom factor for full-body shots so the face fills the circle
+type BoardMember = TeamMember & { imagePosition?: string; imageScale?: number };
+
 // Photos live in /public/images/team/ (lowercase names for case-safe Linux/Vercel paths).
-const BOARD: TeamMember[] = [
-  { name: 'Tanish Momaya', role: 'President', image: '/images/team/tanish.png', bio: 'Leading the year of Aant Asti Prarambh.' },
-  { name: 'Kashvi Kothari', role: 'Secretary', image: '/images/team/kashvi.jpg' },
+const BOARD: BoardMember[] = [
+  { name: 'Tanish Momaya', role: 'President', image: '/images/team/tanish.png', bio: 'Leading the year of Aant Asti Prarambh.', imagePosition: '51% 15%', imageScale: 2.4 },
+  { name: 'Kashvi Kothari', role: 'Secretary', image: '/images/team/kashvi.jpg', imagePosition: '38% 13%', imageScale: 2.8 },
   { name: 'Romil Lodaya', role: 'Vice President', image: '/images/team/romil.jpg' },
   { name: 'Hriday Kataria', role: 'Vice President', image: '/images/team/hriday.jpg' },
   { name: 'Krisha Panchal', role: 'Joint Secretary', image: '/images/team/krisha.jpg' },
@@ -71,6 +76,11 @@ export default function TeamPage() {
                       fill
                       sizes="96px"
                       className="object-cover"
+                      style={{
+                        objectPosition: member.imagePosition ?? '50% 50%',
+                        transform: member.imageScale ? `scale(${member.imageScale})` : undefined,
+                        transformOrigin: member.imagePosition ?? '50% 50%',
+                      }}
                     />
                   ) : (
                     <span className="font-display text-2xl text-[var(--text-primary)]">
