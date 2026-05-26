@@ -21,7 +21,7 @@ export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Team', href: '/team' },
-  { label: 'Projects', href: '/projects' },
+  { label: 'Avenues', href: '/projects' },
   { label: 'Events', href: '/events' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Join', href: '/join' },
