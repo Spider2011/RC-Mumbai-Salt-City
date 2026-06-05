@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { fadeUp, staggerFast } from '@/lib/motion';
@@ -13,6 +13,18 @@ interface SectionHeadingProps {
   align?: 'left' | 'center';
   className?: string;
 }
+
+// 3D title reveal — tilts up from below with a depth-perspective rotateX.
+const title3DReveal: Variants = {
+  hidden: { opacity: 0, y: 36, rotateX: -22, filter: 'blur(6px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.95, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 export function SectionHeading({
   eyebrow,
@@ -27,6 +39,7 @@ export function SectionHeading({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: '-15%' }}
+      style={{ perspective: 1200 }}
       className={cn(
         'flex flex-col gap-4',
         align === 'center' && 'items-center text-center',
@@ -39,7 +52,8 @@ export function SectionHeading({
         </motion.div>
       )}
       <motion.h2
-        variants={fadeUp}
+        variants={title3DReveal}
+        style={{ transformStyle: 'preserve-3d', transformOrigin: '50% 100%' }}
         className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-[1.1] text-[var(--text-primary)]"
       >
         {title}

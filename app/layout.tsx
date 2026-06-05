@@ -9,6 +9,7 @@ import { AmbientMandala } from '@/components/effects/AmbientMandala';
 import { ShlokaEasterEgg } from '@/components/effects/ShlokaEasterEgg';
 import { Loader } from '@/components/effects/Loader';
 import { PageTransition } from '@/components/effects/PageTransition';
+import { ScrollProgressBar } from '@/components/effects/ScrollProgressBar';
 import { GlassNav } from '@/components/ui/GlassNav';
 
 const cormorant = Cormorant_Garamond({
@@ -73,6 +74,7 @@ export default function RootLayout({
     >
       <body className="noise relative min-h-dvh">
         <Loader />
+        <ScrollProgressBar />
         <CustomCursor />
         <AmbientMandala />
         <ShlokaEasterEgg />
