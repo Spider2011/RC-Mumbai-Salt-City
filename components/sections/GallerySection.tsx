@@ -1,20 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Camera, ArrowRight, Sparkle } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Sparkle } from 'lucide-react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { fadeUp, staggerFast } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 
-// Mosaic spans for visual rhythm (grid-breaking, editorial)
-const PLACEHOLDERS = [
-  { id: 1, span: 'sm:col-span-2 sm:row-span-2' },
-  { id: 2, span: '' },
-  { id: 3, span: '' },
-  { id: 4, span: 'sm:row-span-2' },
-  { id: 5, span: '' },
-  { id: 6, span: 'sm:col-span-2' },
+// Six photos from /public/images/gallery/, with mosaic spans for visual rhythm.
+const TILES = [
+  { id: '01', src: '/images/gallery/01.jpg', span: 'sm:col-span-2 sm:row-span-2' },
+  { id: '07', src: '/images/gallery/07.jpg', span: '' },
+  { id: '12', src: '/images/gallery/12.jpg', span: '' },
+  { id: '23', src: '/images/gallery/23.jpg', span: 'sm:row-span-2' },
+  { id: '29', src: '/images/gallery/29.jpg', span: '' },
+  { id: '40', src: '/images/gallery/40.jpg', span: 'sm:col-span-2' },
 ];
 
 export function GallerySection() {
@@ -28,7 +29,6 @@ export function GallerySection() {
         className="mx-auto mb-14 max-w-2xl"
       />
 
-      {/* Replace placeholder divs with actual images later. Paths go in /public/images/gallery/ */}
       <motion.div
         variants={staggerFast}
         initial="hidden"
@@ -37,7 +37,7 @@ export function GallerySection() {
         className="grid auto-rows-[180px] grid-cols-2 gap-4 sm:grid-cols-4"
         style={{ perspective: 1400 }}
       >
-        {PLACEHOLDERS.map((item) => (
+        {TILES.map((item) => (
           <motion.div
             key={item.id}
             variants={fadeUp}
@@ -46,28 +46,34 @@ export function GallerySection() {
             className={cn('group relative cursor-pointer', item.span)}
             style={{ perspective: 1200 }}
           >
-            {/* Flip container */}
             <motion.div
               className="relative h-full w-full"
               style={{ transformStyle: 'preserve-3d' }}
               whileHover={{ rotateY: 180 }}
               transition={{ type: 'spring', stiffness: 180, damping: 24 }}
             >
-              {/* FRONT face */}
+              {/* FRONT face — the photo */}
               <div
-                className="absolute inset-0 flex flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border border-white/10 text-[var(--text-muted)]"
+                className="absolute inset-0 overflow-hidden rounded-2xl border border-white/10"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
-                  background:
-                    'linear-gradient(135deg, rgba(132,94,194,0.20), rgba(44,115,210,0.20))',
-                  backdropFilter: 'blur(10px)',
                 }}
               >
-                <Camera className="h-7 w-7" strokeWidth={1.5} />
-                <span className="text-xs tracking-wide">[Photo Placeholder]</span>
+                <Image
+                  src={item.src}
+                  alt="A moment from our journey"
+                  fill
+                  sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 50vw"
+                  className="object-cover"
+                />
+                {/* Subtle dark veil + corner sparkle */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)]/30 via-transparent to-transparent"
+                />
                 <Sparkle
-                  className="absolute right-3 top-3 h-3 w-3 text-[var(--accent-gold)]/60"
+                  className="absolute right-3 top-3 h-3 w-3 text-[var(--accent-gold)]/80"
                   strokeWidth={1.4}
                 />
               </div>
@@ -80,7 +86,7 @@ export function GallerySection() {
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                   background:
-                    'linear-gradient(135deg, rgba(212,175,55,0.20), rgba(132,94,194,0.30))',
+                    'linear-gradient(135deg, rgba(212,175,55,0.22), rgba(132,94,194,0.32))',
                   backdropFilter: 'blur(14px)',
                 }}
               >
