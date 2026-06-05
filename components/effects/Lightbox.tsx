@@ -2,7 +2,8 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface LightboxImage {
@@ -34,6 +35,14 @@ export function Lightbox({ images, index, onClose, onPrev, onNext }: LightboxPro
   const current = open && index !== null ? images[index] : null;
   const total = images.length;
 
+  // Portal mount — escapes any transformed ancestor (PageTransition's motion.div
+  // applies a scale transform, which makes `position: fixed` relative to it
+  // instead of the viewport. Rendering at document.body fixes the offset bug.
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    setPortalRoot(document.body);
+  }, []);
+
   // Keyboard navigation
   useEffect(() => {
     if (!open) return;
@@ -56,7 +65,9 @@ export function Lightbox({ images, index, onClose, onPrev, onNext }: LightboxPro
     };
   }, [open]);
 
-  return (
+  if (!portalRoot) return null;
+
+  return createPortal(
     <div
       className={`fixed inset-0 z-[60] flex items-center justify-center p-4 transition-opacity duration-200 ease-out md:p-8 ${
         open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
@@ -139,6 +150,7 @@ export function Lightbox({ images, index, onClose, onPrev, onNext }: LightboxPro
           </div>
         </>
       )}
-    </div>
+    </div>,
+    portalRoot
   );
 }
