@@ -1,21 +1,45 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { STATS } from '@/lib/constants';
 import { fadeUp, fadeRight, staggerContainer, floatDrift } from '@/lib/motion';
 
 export function MissionSection() {
+  const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+
+  // Scroll-driven 3D depth — glyph drifts up, mission card subtly rotates.
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start'],
+  });
+  const glyphY = useTransform(scrollYProgress, [0, 1], ['20%', '-30%']);
+  const glyphRotate = useTransform(scrollYProgress, [0, 1], [-8, 8]);
+  const cardRotateY = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -4]);
+  const cardY = useTransform(scrollYProgress, [0, 1], ['0%', '-6%']);
+
   return (
-    <section className="section mx-auto max-w-7xl px-6" aria-labelledby="mission-heading">
+    <section
+      ref={ref}
+      className="section mx-auto max-w-7xl px-6"
+      aria-labelledby="mission-heading"
+      style={{ perspective: 1600 }}
+    >
       <div className="grid items-center gap-12 lg:grid-cols-[1.4fr_1fr]">
-        {/* Left: mission glass card */}
+        {/* Left: mission glass card with subtle 3D tilt on scroll */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-15%' }}
+          style={
+            reduceMotion
+              ? undefined
+              : { rotateY: cardRotateY, y: cardY, transformStyle: 'preserve-3d' }
+          }
         >
           <GlassCard className="p-8 md:p-12" tilt={false}>
             <motion.div variants={fadeUp}>
@@ -43,7 +67,7 @@ export function MissionSection() {
           </GlassCard>
         </motion.div>
 
-        {/* Right: floating Sanskrit glyph */}
+        {/* Right: floating Sanskrit glyph — scroll parallax + drift + slow rotation */}
         <motion.div
           variants={fadeRight}
           initial="hidden"
@@ -53,15 +77,17 @@ export function MissionSection() {
           aria-hidden
         >
           <motion.span
-            {...floatDrift}
-            className="font-sanskrit select-none text-[clamp(6rem,14vw,11rem)] leading-none text-[var(--text-primary)]/[0.06]"
+            style={reduceMotion ? undefined : { y: glyphY, rotate: glyphRotate }}
+            className="font-sanskrit absolute select-none text-[clamp(6rem,14vw,11rem)] leading-none text-[var(--text-primary)]/[0.06]"
           >
-            अन्त
+            <motion.span {...floatDrift} className="inline-block">
+              अन्त
+            </motion.span>
           </motion.span>
         </motion.div>
       </div>
 
-      {/* Stat cards */}
+      {/* Stat cards — staggered cascade */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -72,9 +98,21 @@ export function MissionSection() {
         {STATS.map((stat) => (
           <motion.div key={stat.label} variants={fadeUp}>
             <GlassCard className="flex flex-col items-center p-8 text-center" glowColor="#D4AF37">
-              <span className="font-accent text-gradient-gold text-5xl font-semibold">
+              <motion.span
+                className="font-accent text-gradient-gold text-5xl font-semibold"
+                animate={
+                  reduceMotion
+                    ? undefined
+                    : { textShadow: ['0 0 0 rgba(212,175,55,0)', '0 0 18px rgba(212,175,55,0.4)', '0 0 0 rgba(212,175,55,0)'] }
+                }
+                transition={
+                  reduceMotion
+                    ? undefined
+                    : { duration: 3.6, repeat: Infinity, ease: 'easeInOut' }
+                }
+              >
                 {stat.value}
-              </span>
+              </motion.span>
               <span className="mt-3 text-lg font-medium text-[var(--text-primary)]">
                 {stat.label}
               </span>

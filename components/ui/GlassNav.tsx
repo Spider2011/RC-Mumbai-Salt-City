@@ -8,6 +8,7 @@ import { Menu, X } from 'lucide-react';
 import { NAV_LINKS, SITE } from '@/lib/constants';
 import { heroNav } from '@/lib/motion';
 import { cn } from '@/lib/utils';
+import { MagneticLink } from './MagneticLink';
 
 export function GlassNav() {
   const pathname = usePathname();
@@ -38,11 +39,12 @@ export function GlassNav() {
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
             return (
-              <Link
+              <MagneticLink
                 key={link.href}
                 href={link.href}
+                pull={0.35}
                 className={cn(
-                  'relative rounded-full px-4 py-2 text-sm transition-colors duration-300',
+                  'relative inline-block rounded-full px-4 py-2 text-sm transition-colors duration-300',
                   active
                     ? 'text-[var(--text-primary)]'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -56,7 +58,7 @@ export function GlassNav() {
                   />
                 )}
                 <span className="relative z-10">{link.label}</span>
-              </Link>
+              </MagneticLink>
             );
           })}
         </nav>
