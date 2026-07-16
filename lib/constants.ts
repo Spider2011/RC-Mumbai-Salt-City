@@ -10,7 +10,9 @@ export const SITE = {
   themeDevanagari: 'अन्त अस्ति प्रारम्भ',
   themeTranslation: 'The End Is The Beginning',
   tagline: 'Service Above Self',
-  email: 'rcmumbaIsaltcity@gmail.com',
+  email: 'rtr.tanish.momaya@gmail.com',
+  phone: '9136240120',
+  phoneDisplay: '+91 91362 40120',
   instagram: 'https://instagram.com/rcmumbaIsaltcity',
   linkedin: 'https://linkedin.com/company/rcmumbaIsaltcity',
   facebook: 'https://facebook.com/rcmumbaIsaltcity',
@@ -25,7 +27,6 @@ export const NAV_LINKS = [
   { label: 'Events', href: '/events' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Join', href: '/join' },
-  { label: 'Contact', href: '/contact' },
 ] as const;
 
 export const AVENUES = [

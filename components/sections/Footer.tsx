@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { Mail, Phone } from 'lucide-react';
 import { SITE, NAV_LINKS } from '@/lib/constants';
 import { AudioToggle } from '@/components/effects/AudioToggle';
 import { InstagramIcon, LinkedinIcon, FacebookIcon, XIcon } from '@/components/ui/SocialIcons';
@@ -19,7 +20,7 @@ export function Footer() {
   return (
     <footer className="relative mt-10" aria-label="Site footer">
       <div className="glass-heavy relative overflow-hidden border-t border-white/10">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-2 lg:grid-cols-4">
           {/* Left: brand */}
           <div>
             <Link href="/" className="flex items-center gap-3">
@@ -57,8 +58,33 @@ export function Footer() {
             </ul>
           </nav>
 
+          {/* Get in touch */}
+          <div>
+            <h3 className="eyebrow mb-4">Get in Touch</h3>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href={`mailto:${SITE.email}`}
+                  className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--accent-gold)]"
+                >
+                  <Mail className="h-4 w-4 shrink-0" />
+                  <span className="break-all">{SITE.email}</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`tel:+91${SITE.phone}`}
+                  className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--accent-gold)]"
+                >
+                  <Phone className="h-4 w-4 shrink-0" />
+                  {SITE.phoneDisplay}
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* Right: socials */}
-          <div className="md:justify-self-end">
+          <div className="lg:justify-self-end">
             <h3 className="eyebrow mb-4">Connect</h3>
             <div className="flex gap-3">
               {SOCIALS.map((social) => {
