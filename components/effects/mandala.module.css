@@ -1,0 +1,26 @@
+/* Compositor-thread CSS rotation — no JS, no RAF, no main-thread cost. */
+
+.spin {
+  transform-origin: 200px 200px;
+  animation: mandala-cw var(--mandala-dur, 120s) linear infinite;
+}
+
+.spinReverse {
+  transform-origin: 200px 200px;
+  animation: mandala-ccw var(--mandala-dur, 120s) linear infinite;
+}
+
+@keyframes mandala-cw {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes mandala-ccw {
+  to { transform: rotate(-360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin,
+  .spinReverse {
+    animation: none;
+  }
+}
