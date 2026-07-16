@@ -16,9 +16,24 @@ const ABOUT_DROPDOWN = [
   { label: 'District 3141', href: '/about?tab=district' },
 ] as const;
 
+const dropdownPanel = {
+  hidden: { opacity: 0, y: -8, transition: { duration: 0.15 } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.2, staggerChildren: 0.04, delayChildren: 0.05 },
+  },
+};
+
+const dropdownItem = {
+  hidden: { opacity: 0, y: -6 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.18 } },
+};
+
 export function GlassNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   return (
     <>
@@ -54,7 +69,16 @@ export function GlassNav() {
 
             if (link.href === '/about') {
               return (
-                <div key={link.href} className="group relative">
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => setAboutOpen(true)}
+                  onMouseLeave={() => setAboutOpen(false)}
+                  onFocusCapture={() => setAboutOpen(true)}
+                  onBlurCapture={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget as Node)) setAboutOpen(false);
+                  }}
+                >
                   <Link
                     href="/about"
                     className={cn(
@@ -72,22 +96,39 @@ export function GlassNav() {
                       />
                     )}
                     <span className="relative z-10">{link.label}</span>
-                    <ChevronDown className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180 group-focus-within:rotate-180" />
+                    <ChevronDown
+                      className={cn(
+                        'relative z-10 h-3.5 w-3.5 transition-transform duration-300',
+                        aboutOpen && 'rotate-180'
+                      )}
+                    />
                   </Link>
 
                   {/* Dropdown — pt bridge keeps hover alive across the gap */}
-                  <div className="invisible absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                    <div className="glass glass-glow min-w-[240px] rounded-2xl bg-[var(--bg-primary)]/85 p-2 backdrop-blur-2xl">
-                      {ABOUT_DROPDOWN.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block rounded-xl px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:bg-white/10 hover:text-[var(--accent-gold)]"
+                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3">
+                    <AnimatePresence>
+                      {aboutOpen && (
+                        <motion.div
+                          variants={dropdownPanel}
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                          className="glass glass-glow min-w-[240px] rounded-2xl bg-[var(--bg-primary)]/85 p-2 backdrop-blur-2xl"
                         >
-                          {item.label}
-                        </Link>
-                      ))}
-                    </div>
+                          {ABOUT_DROPDOWN.map((item) => (
+                            <motion.div key={item.href} variants={dropdownItem}>
+                              <Link
+                                href={item.href}
+                                onClick={() => setAboutOpen(false)}
+                                className="block rounded-xl px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:bg-white/10 hover:text-[var(--accent-gold)]"
+                              >
+                                {item.label}
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               );

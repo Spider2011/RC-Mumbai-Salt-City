@@ -71,10 +71,11 @@ export function GlassCard({
           ? { scale: 1.025, y: -6, transition: springSnappy }
           : undefined
       }
+      whileTap={hover && !reduceMotion ? { scale: 0.98 } : undefined}
       className={cn(
         glassClass,
-        'glass-glow relative overflow-hidden rounded-2xl',
-        glowColor && 'transition-shadow duration-300',
+        'group glass-glow relative overflow-hidden rounded-2xl transition-shadow duration-300',
+        hover && 'hover:shadow-[0_18px_50px_-20px_rgba(212,175,55,0.35)]',
         className
       )}
     >
@@ -82,7 +83,7 @@ export function GlassCard({
       {glowColor && (
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 hover:opacity-100"
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
           style={{
             background: `radial-gradient(circle at 50% 0%, ${glowColor}33, transparent 70%)`,
           }}
@@ -93,7 +94,7 @@ export function GlassCard({
       {enableTilt && (
         <motion.span
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 hover:opacity-100"
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
           style={{
             background: useTransform(
               [glareX, glareY],

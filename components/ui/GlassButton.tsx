@@ -89,6 +89,20 @@ export function GlassButton({
           className="absolute inset-0 rounded-full bg-gradient-to-r from-[var(--accent-gold)]/0 via-[var(--accent-gold)]/15 to-[var(--accent-gold)]/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         />
       )}
+      {/* Shimmer sweep — light streak crosses the button on hover (transform-only) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-full"
+      >
+        <span
+          className={cn(
+            'absolute inset-y-0 left-0 w-1/3 -translate-x-[150%] -skew-x-12 bg-gradient-to-r transition-transform duration-700 ease-out group-hover:translate-x-[400%]',
+            variant === 'gold'
+              ? 'from-transparent via-[var(--accent-gold)]/25 to-transparent'
+              : 'from-transparent via-white/15 to-transparent'
+          )}
+        />
+      </span>
     </>
   );
 
