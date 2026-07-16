@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { SITE, NAV_LINKS } from '@/lib/constants';
 import { AudioToggle } from '@/components/effects/AudioToggle';
@@ -22,9 +23,13 @@ export function Footer() {
           {/* Left: brand */}
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <span className="glass flex h-11 w-11 items-center justify-center rounded-full">
-                <span className="font-display text-gradient-gold text-lg">R</span>
-              </span>
+              <Image
+                src="/images/logo.png"
+                alt={`${SITE.shortName} logo`}
+                width={44}
+                height={44}
+                className="h-11 w-11 rounded-full"
+              />
               <span className="font-display text-lg text-[var(--text-primary)]">
                 {SITE.shortName}
               </span>

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -26,9 +27,16 @@ export function GlassNav() {
         <Link
           href="/"
           aria-label={`${SITE.shortName} home`}
-          className="glass glass-glow flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold tracking-tight transition-colors hover:bg-white/10"
+          className="flex h-12 w-12 items-center justify-center rounded-full transition-transform hover:scale-105"
         >
-          <span className="font-display text-gradient-gold text-lg">R</span>
+          <Image
+            src="/images/logo.png"
+            alt={`${SITE.shortName} logo`}
+            width={48}
+            height={48}
+            priority
+            className="h-12 w-12 rounded-full"
+          />
         </Link>
 
         {/* Desktop nav */}
