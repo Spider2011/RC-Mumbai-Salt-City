@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GoldDivider } from '@/components/ui/GoldDivider';
@@ -165,7 +166,15 @@ function DistrictContent() {
 }
 
 export function AboutTabs() {
-  const [active, setActive] = useState<Tab>('Our Club');
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [active, setActive] = useState<Tab>(tabParam === 'district' ? 'District 3141' : 'Our Club');
+
+  // Keep the tab in sync when the nav dropdown navigates to /about?tab=district
+  // while this page is already mounted.
+  useEffect(() => {
+    setActive(tabParam === 'district' ? 'District 3141' : 'Our Club');
+  }, [tabParam]);
 
   return (
     <>

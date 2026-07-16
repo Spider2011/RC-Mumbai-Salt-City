@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Footer } from '@/components/sections/Footer';
 import { AboutTabs } from '@/components/sections/AboutTabs';
@@ -25,7 +26,9 @@ export default function AboutPage() {
 
       <div className="mx-auto max-w-4xl px-6 pb-24">
         {/* Our Club / District 3141 tabs */}
-        <AboutTabs />
+        <Suspense>
+          <AboutTabs />
+        </Suspense>
       </div>
 
       <Footer />

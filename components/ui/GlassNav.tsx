@@ -5,11 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { NAV_LINKS, SITE } from '@/lib/constants';
 import { heroNav } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 import { MagneticLink } from './MagneticLink';
+
+const ABOUT_DROPDOWN = [
+  { label: SITE.name, href: '/about' },
+  { label: 'District 3141', href: '/about?tab=district' },
+] as const;
 
 export function GlassNav() {
   const pathname = usePathname();
@@ -46,6 +51,48 @@ export function GlassNav() {
         >
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
+
+            if (link.href === '/about') {
+              return (
+                <div key={link.href} className="group relative">
+                  <Link
+                    href="/about"
+                    className={cn(
+                      'relative inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm transition-colors duration-300',
+                      active
+                        ? 'text-[var(--text-primary)]'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                    )}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="nav-active"
+                        className="absolute inset-0 rounded-full bg-white/10"
+                        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10">{link.label}</span>
+                    <ChevronDown className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180 group-focus-within:rotate-180" />
+                  </Link>
+
+                  {/* Dropdown — pt bridge keeps hover alive across the gap */}
+                  <div className="invisible absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="glass glass-glow min-w-[240px] rounded-2xl bg-[var(--bg-primary)]/85 p-2 backdrop-blur-2xl">
+                      {ABOUT_DROPDOWN.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block rounded-xl px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:bg-white/10 hover:text-[var(--accent-gold)]"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <MagneticLink
                 key={link.href}
@@ -112,6 +159,7 @@ export function GlassNav() {
                     hidden: { opacity: 0, y: 20 },
                     visible: { opacity: 1, y: 0 },
                   }}
+                  className="flex flex-col items-center"
                 >
                   <Link
                     href={link.href}
@@ -125,6 +173,20 @@ export function GlassNav() {
                   >
                     {link.label}
                   </Link>
+                  {link.href === '/about' && (
+                    <div className="mt-2 flex flex-col items-center gap-1.5">
+                      {ABOUT_DROPDOWN.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className="text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--accent-gold)]"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </motion.nav>
