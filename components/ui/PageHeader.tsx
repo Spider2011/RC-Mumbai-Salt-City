@@ -39,6 +39,7 @@ export function PageHeader({ eyebrow, title, subtitle, sanskrit }: PageHeaderPro
     offset: ['start start', 'end start'],
   });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ['0%', '-40%']);
+  const watermarkScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
   const titleY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%']);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
@@ -65,7 +66,7 @@ export function PageHeader({ eyebrow, title, subtitle, sanskrit }: PageHeaderPro
       {sanskrit && (
         <motion.span
           aria-hidden
-          style={reduceMotion ? undefined : { y: watermarkY }}
+          style={reduceMotion ? undefined : { y: watermarkY, scale: watermarkScale, x: '-50%' }}
           className="font-sanskrit pointer-events-none absolute -top-4 left-1/2 z-[2] -translate-x-1/2 text-[clamp(5rem,18vw,14rem)] leading-none text-[var(--text-primary)]/[0.04]"
         >
           {sanskrit}
