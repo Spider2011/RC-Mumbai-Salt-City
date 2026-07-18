@@ -42,3 +42,7 @@ next-env.d.ts
 
 # Claude Code tooling (not part of the website)
 /.claude/
+
+# JeevanDaan raw originals (videos/HEIC/full-res) — only the optimized web/ subset is committed
+/public/images/jeevandaan/*
+!/public/images/jeevandaan/web/
