@@ -30,24 +30,22 @@ export const EVENTS: ClubEvent[] = [
   },
   {
     id: 'e2',
-    slug: 'skill-workshop-webinar',
-    title: 'Skill Workshop Webinar',
+    slug: 'world-youth-skills-day',
+    title: 'World Youth Skills Day',
     date: '15th July 2026',
     avenue: 'International Service',
     description:
-      'An online skill-building session bridging international best practices with local impact, open to Rotaractors across districts.',
+      'A skill-building celebration bridging international best practices with local impact, open to Rotaractors across districts.',
     longDescription: [
-      'The Skill Workshop Webinar brought together Rotaractors across districts for an evening of practical learning. Hosted online to keep it open to all, the session focused on skills that translate directly into stronger service projects and personal growth.',
+      'On World Youth Skills Day, we celebrated the power of learning by doing. The session brought together Rotaractors across districts to sharpen skills that translate directly into stronger service projects and personal growth.',
       'Speakers shared international best practices and grounded them in real, local examples — from project planning to communication and leadership. Attendees left with frameworks they could apply the very next week.',
-      'The webinar reinforced a simple belief: the more capable each Rotaractor becomes, the greater our collective impact on the community.',
+      'The day reinforced a simple belief: the more capable each Rotaractor becomes, the greater our collective impact on the community.',
     ],
-    location: 'Online — Zoom',
-    gallery: [
-      '/images/gallery/07.jpg',
-      '/images/gallery/08.jpg',
-      '/images/gallery/09.jpg',
-      '/images/gallery/10.jpg',
-    ],
+    location: 'Mumbai Salt City',
+    gallery: Array.from(
+      { length: 14 },
+      (_, i) => `/images/world-youth-skills-day/web/${String(i + 1).padStart(2, '0')}.jpg`
+    ),
     type: 'past',
   },
   {
