@@ -26,10 +26,23 @@ export interface TeamMember {
 
 export interface Event {
   id: string;
+  /** URL slug — /events/[slug] */
+  slug: string;
   title: string;
   date: string;
+  /** Short one-liner used on the timeline. */
   description: string;
+  /** Full multi-paragraph description shown on the detail page. */
+  longDescription?: string[];
+  /** Optional venue / mode. */
+  location?: string;
+  /** Optional time window. */
+  time?: string;
+  /** Avenue of service this event belongs to. */
+  avenue?: string;
   image?: string;
+  /** Photo gallery paths — shown on the detail page for past events. */
+  gallery?: string[];
   type: 'upcoming' | 'past';
 }
 
