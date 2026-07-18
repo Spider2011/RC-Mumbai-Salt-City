@@ -36,12 +36,13 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
 
   return (
     <>
+      {/* Horizontal scroll — 2 rows, ~3 columns visible per viewport. */}
       <motion.div
         variants={staggerFast}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-8% 0px' }}
-        className="grid grid-cols-2 gap-4 sm:grid-cols-3"
+        className="event-gallery-scroll -mx-6 grid grid-flow-col grid-rows-2 gap-4 overflow-x-auto px-6 pb-4"
       >
         {images.map((src, i) => (
           <motion.button
@@ -52,13 +53,13 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
             whileHover={{ scale: 1.03, y: -4 }}
             transition={{ type: 'spring', stiffness: 240, damping: 20 }}
             aria-label={`Open photo ${i + 1} of ${total}`}
-            className="group relative aspect-[4/3] cursor-zoom-in overflow-hidden rounded-2xl border border-white/10 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="group relative aspect-[4/3] w-[70vw] cursor-zoom-in overflow-hidden rounded-2xl border border-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-[42vw] lg:w-[calc((53rem-2rem)/3)]"
           >
             <Image
               src={src}
               alt={`${eventTitle} — photo ${i + 1}`}
               fill
-              sizes="(min-width: 640px) 33vw, 50vw"
+              sizes="(min-width: 1024px) 24rem, (min-width: 640px) 42vw, 70vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <span
@@ -68,6 +69,9 @@ export function EventGallery({ images, eventTitle }: EventGalleryProps) {
           </motion.button>
         ))}
       </motion.div>
+      <p className="mt-3 px-1 text-xs text-[var(--text-muted)]">
+        Scroll sideways to see all {total} photos →
+      </p>
 
       <Lightbox
         images={lightboxImages}

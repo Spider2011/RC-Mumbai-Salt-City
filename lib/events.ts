@@ -22,14 +22,10 @@ export const EVENTS: ClubEvent[] = [
       'By the close of the day, the drive had collected a heartening number of units — each one a quiet promise kept to a stranger in need. It set the tone for a year defined by service above self.',
     ],
     location: 'Community Hall, Mumbai Salt City',
-    gallery: [
-      '/images/gallery/01.jpg',
-      '/images/gallery/02.jpg',
-      '/images/gallery/03.jpg',
-      '/images/gallery/04.jpg',
-      '/images/gallery/05.jpg',
-      '/images/gallery/06.jpg',
-    ],
+    gallery: Array.from(
+      { length: 40 },
+      (_, i) => `/images/jeevandaan/web/${String(i + 1).padStart(2, '0')}.jpg`
+    ),
     type: 'past',
   },
   {
