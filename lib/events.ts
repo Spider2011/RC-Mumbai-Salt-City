@@ -21,7 +21,7 @@ export const EVENTS: ClubEvent[] = [
       'Members, families, and citizens came together to donate, register as future donors, and spread awareness about the constant need for safe blood. Volunteers managed registration, refreshments, and post-donation care, ensuring every donor felt looked after.',
       'By the close of the day, the drive had collected a heartening number of units — each one a quiet promise kept to a stranger in need. It set the tone for a year defined by service above self.',
     ],
-    location: 'Community Hall, Mumbai Salt City',
+    location: 'Medstar Multispeciality Hospital',
     gallery: Array.from(
       { length: 40 },
       (_, i) => `/images/jeevandaan/web/${String(i + 1).padStart(2, '0')}.jpg`
@@ -41,7 +41,7 @@ export const EVENTS: ClubEvent[] = [
       'Speakers shared international best practices and grounded them in real, local examples — from project planning to communication and leadership. Attendees left with frameworks they could apply the very next week.',
       'The day reinforced a simple belief: the more capable each Rotaractor becomes, the greater our collective impact on the community.',
     ],
-    location: 'Mumbai Salt City',
+    location: 'Online — Google Meet',
     gallery: Array.from(
       { length: 14 },
       (_, i) => `/images/world-youth-skills-day/web/${String(i + 1).padStart(2, '0')}.jpg`
@@ -61,7 +61,7 @@ export const EVENTS: ClubEvent[] = [
       'Whether you are a grandmaster in the making or picking up your first pawn, there is a place for you at the board. Expect friendly matches, quick tactics, and plenty of good company.',
       'Register below to reserve your seat — spaces are limited to keep the tournament well-paced.',
     ],
-    location: 'To be announced',
+    location: 'TBA',
     time: 'Evening',
     type: 'upcoming',
   },
@@ -78,7 +78,7 @@ export const EVENTS: ClubEvent[] = [
       'Players of every level are welcome — we will group teams to keep matches fun and fair. Come for the rallies, stay for the camaraderie.',
       'Register below to claim your spot on the court.',
     ],
-    location: 'To be announced',
+    location: 'Playflex Pickleball Court',
     type: 'upcoming',
   },
   {
@@ -94,7 +94,7 @@ export const EVENTS: ClubEvent[] = [
       'The evening honours the outgoing board, installs the new team, and sets our intentions for the year of service ahead. Family, friends, and fellow Rotaractors are warmly invited to witness the handover.',
       'Register below to join us for this milestone occasion.',
     ],
-    location: 'To be announced',
+    location: 'TBA',
     time: 'Evening',
     type: 'upcoming',
   },
@@ -111,7 +111,7 @@ export const EVENTS: ClubEvent[] = [
       'Expect cultural performances, community outreach, and an emphasis on sustainable, respectful festivity. It is a chance to serve and celebrate side by side.',
       'Register below to be part of the celebration.',
     ],
-    location: 'To be announced',
+    location: 'TBA',
     type: 'upcoming',
   },
 ];
