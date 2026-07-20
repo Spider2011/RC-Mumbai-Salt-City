@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { TextField, TextAreaField } from '@/components/ui/FormField';
+import { submitToSheet } from '@/lib/submit-form';
 
 interface EventRegisterFormProps {
   eventTitle: string;
@@ -53,14 +54,29 @@ export function EventRegisterForm({ eventTitle }: EventRegisterFormProps) {
     return Object.keys(next).length === 0;
   }
 
+  const [failed, setFailed] = useState(false);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
-    // TODO: wire to a real endpoint / API route. Simulated for now.
-    await new Promise((r) => setTimeout(r, 900));
-    setSubmitting(false);
-    setDone(true);
+    setFailed(false);
+    try {
+      // Routes to a tab named after the event.
+      await submitToSheet(eventTitle, {
+        event: eventTitle,
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        attendees: form.guests,
+        note: form.note,
+      });
+      setDone(true);
+    } catch {
+      setFailed(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -150,6 +166,11 @@ export function EventRegisterForm({ eventTitle }: EventRegisterFormProps) {
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 )}
               </GlassButton>
+              {failed && (
+                <p className="mt-3 text-sm text-[var(--accent-sunrise-from)]" role="alert">
+                  Something went wrong with your registration. Please try again.
+                </p>
+              )}
             </div>
           </motion.form>
         )}

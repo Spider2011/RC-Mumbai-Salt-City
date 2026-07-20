@@ -7,6 +7,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { TextField, TextAreaField, SelectField } from '@/components/ui/FormField';
 import { AVENUES } from '@/lib/constants';
+import { submitToSheet } from '@/lib/submit-form';
 
 interface FormState {
   name: string;
@@ -49,14 +50,27 @@ export function JoinForm() {
     return Object.keys(next).length === 0;
   }
 
+  const [failed, setFailed] = useState(false);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
-    // TODO: wire to a real endpoint / API route. Simulated for now.
-    await new Promise((r) => setTimeout(r, 900));
-    setSubmitting(false);
-    setDone(true);
+    setFailed(false);
+    try {
+      await submitToSheet('Join', {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        avenue: form.avenue,
+        why: form.why,
+      });
+      setDone(true);
+    } catch {
+      setFailed(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -155,6 +169,11 @@ export function JoinForm() {
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 )}
               </GlassButton>
+              {failed && (
+                <p className="mt-3 text-sm text-[var(--accent-sunrise-from)]" role="alert">
+                  Something went wrong sending your application. Please try again.
+                </p>
+              )}
             </div>
           </motion.form>
         )}
