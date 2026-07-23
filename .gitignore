@@ -51,3 +51,6 @@ next-env.d.ts
 /public/images/world-youth-skills-day/*
 !/public/images/world-youth-skills-day/web/
 /public/images/World Youth Skills Day/
+
+# Installation raw originals — only optimized web/ subset committed
+/public/images/Installation/

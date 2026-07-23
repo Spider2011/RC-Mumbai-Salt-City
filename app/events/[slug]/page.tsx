@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, CalendarDays, Clock, MapPin, Tag } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -10,10 +12,38 @@ import { EventGallery } from '@/components/sections/EventGallery';
 import { EventRegisterForm } from '@/components/sections/EventRegisterForm';
 import { Footer } from '@/components/sections/Footer';
 import { EVENTS, getEventBySlug } from '@/lib/events';
-import { SITE } from '@/lib/constants';
 
 interface EventPageProps {
   params: Promise<{ slug: string }>;
+}
+
+// Turns bare URLs and phone numbers inside a paragraph into clickable links.
+const RICH_RE = /(https?:\/\/[^\s]+|\+\d[\d\s]{7,}\d)/g;
+
+function RichText({ text }: { text: string }): ReactNode {
+  return text.split(RICH_RE).map((part, i) => {
+    if (/^https?:\/\//.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[var(--accent-gold)] underline underline-offset-2 hover:opacity-80"
+        >
+          {part}
+        </a>
+      );
+    }
+    if (/^\+\d[\d\s]{7,}\d$/.test(part)) {
+      return (
+        <a key={i} href={`tel:${part.replace(/\s+/g, '')}`} className="text-[var(--accent-gold)] hover:opacity-80">
+          {part}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
 }
 
 export function generateStaticParams() {
@@ -78,14 +108,29 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           </Link>
         </ScrollReveal>
 
+        {event.image && (
+          <ScrollReveal>
+            <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
+              <Image
+                src={event.image}
+                alt={`${event.title} invitation`}
+                width={1024}
+                height={1280}
+                priority
+                className="mx-auto h-auto w-full max-w-md"
+              />
+            </div>
+          </ScrollReveal>
+        )}
+
         <ScrollReveal>
           <GlassCard className="mt-6 p-8 md:p-12" tilt={false}>
             <MetaRow event={event} />
             <GoldDivider className="my-7" />
             <div className="space-y-4">
               {(event.longDescription ?? [event.description]).map((para, i) => (
-                <p key={i} className="leading-relaxed text-[var(--text-secondary)]">
-                  {para}
+                <p key={i} className="leading-relaxed text-[var(--text-secondary)] whitespace-pre-line">
+                  <RichText text={para} />
                 </p>
               ))}
             </div>
