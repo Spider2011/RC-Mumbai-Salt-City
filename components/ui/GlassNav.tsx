@@ -47,15 +47,15 @@ export function GlassNav() {
         <Link
           href="/"
           aria-label={`${SITE.shortName} home`}
-          className="flex h-12 w-12 items-center justify-center rounded-full transition-transform hover:scale-105"
+          className="flex h-16 w-16 items-center justify-center rounded-full transition-transform hover:scale-105"
         >
           <Image
             src="/images/logo.png"
             alt={`${SITE.shortName} logo`}
-            width={48}
-            height={48}
+            width={64}
+            height={64}
             priority
-            className="h-12 w-12 rounded-full"
+            className="h-16 w-16 rounded-full"
           />
         </Link>
 
