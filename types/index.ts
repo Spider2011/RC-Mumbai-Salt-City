@@ -54,3 +54,21 @@ export interface Project {
   image?: string;
   status: 'ongoing' | 'completed';
 }
+
+export type AchievementCategory = 'Award' | 'Recognition' | 'Milestone' | 'Impact';
+
+export interface Achievement {
+  id: string;
+  title: string;
+  /** Awarding body or context. */
+  org?: string;
+  /** Year or date, e.g. "2026". */
+  date: string;
+  category: AchievementCategory;
+  description: string;
+}
+
+export interface AchievementStat {
+  value: string;
+  label: string;
+}

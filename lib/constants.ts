@@ -25,6 +25,7 @@ export const NAV_LINKS = [
   { label: 'Team', href: '/team' },
   { label: 'Avenues', href: '/projects' },
   { label: 'Events', href: '/events' },
+  { label: 'Achievements', href: '/achievements' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Join', href: '/join' },
 ] as const;
