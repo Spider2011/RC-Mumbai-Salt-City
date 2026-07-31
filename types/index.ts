@@ -55,20 +55,32 @@ export interface Project {
   status: 'ongoing' | 'completed';
 }
 
-export type AchievementCategory = 'Award' | 'Recognition' | 'Milestone' | 'Impact';
+export type AchievementIcon = 'trophy' | 'crown' | 'star' | 'users';
+export type AchievementGroupKind = 'won' | 'nomination';
 
-export interface Achievement {
-  id: string;
-  title: string;
-  /** Awarding body or context. */
-  org?: string;
-  /** Year or date, e.g. "2026". */
-  date: string;
-  category: AchievementCategory;
-  description: string;
+export interface AchievementItem {
+  /** Primary label — an award/role category, or a project name. */
+  label: string;
+  /** Recipient / winning project, when `label` is a category. */
+  winner?: string;
+  /** Small badge, e.g. a quarter "Q4". */
+  badge?: string;
 }
 
-export interface AchievementStat {
-  value: string;
-  label: string;
+export interface AchievementGroup {
+  id: string;
+  title: string;
+  subtitle?: string;
+  icon: AchievementIcon;
+  kind: AchievementGroupKind;
+  /** When true, each item's `label` is a category and `winner` holds the result. */
+  labelIsCategory?: boolean;
+  items: AchievementItem[];
+}
+
+export interface AchievementYear {
+  year: string;
+  leader: string;
+  leaderRole?: string;
+  groups: AchievementGroup[];
 }

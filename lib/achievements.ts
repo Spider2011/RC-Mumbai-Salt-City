@@ -1,72 +1,79 @@
-import type { Achievement, AchievementStat } from '@/types';
+import type { AchievementYear } from '@/types';
 
 /**
- * Club achievements — awards, recognitions, milestones and impact.
+ * Club achievements, grouped by Rotaract year.
  *
- * TODO: replace these placeholder entries with the club's real achievements
- * (titles, awarding bodies, years). Grouped by `category` on the page.
+ * ACERs and Crowns are awards WON at district level; the rest are nominations.
+ * Add a new object to the array to record another year.
  */
-export const ACHIEVEMENTS: Achievement[] = [
+export const ACHIEVEMENT_YEARS: AchievementYear[] = [
   {
-    id: 'a1',
-    title: '12th Installation Ceremony',
-    org: 'RC Mumbai Salt City',
-    date: '2026',
-    category: 'Milestone',
-    description:
-      'Marked twelve years of continuous service with "Beyond the Horizon", installing the 2026–27 board.',
+    year: '2023–24',
+    leader: 'Rtr. Pranati Chheda',
+    leaderRole: 'President 2023–24',
+    groups: [
+      {
+        id: 'acers',
+        title: 'ACERs',
+        subtitle: 'District awards won',
+        icon: 'trophy',
+        kind: 'won',
+        labelIsCategory: true,
+        items: [
+          { label: 'Best Flagship Project (Community Based)', winner: 'Oh My Friend Ganesha 7.0' },
+          { label: 'Best Social Media Project', winner: '30 Days 30 Campaigns' },
+          { label: 'Outstanding Social Media Campaign', winner: 'Mental Health Awareness Month' },
+          { label: 'Outstanding Editor', winner: 'Rtr. Riya Thakkar' },
+        ],
+      },
+      {
+        id: 'crowns',
+        title: 'Crowns',
+        subtitle: 'Best projects of the quarter',
+        icon: 'crown',
+        kind: 'won',
+        items: [
+          { label: 'Mini Library', badge: 'Q4' },
+          { label: 'Verse Karwaan', badge: 'Q2' },
+          { label: 'Salt City Literary Fest', badge: 'Q3' },
+          { label: '30 Days 30 Campaigns', badge: 'Q4' },
+        ],
+      },
+      {
+        id: 'nom-projects',
+        title: 'Nominations — Projects',
+        subtitle: 'Recognised at district level',
+        icon: 'star',
+        kind: 'nomination',
+        items: [
+          { label: 'Joy of Giving 8.0' },
+          { label: 'Asante' },
+          { label: 'MSC Premier League' },
+          { label: 'Ittar' },
+          { label: 'Master Avenues 5.0' },
+          { label: 'Onam Celebration' },
+          { label: 'Peek-a-Bombay' },
+          { label: 'Off the Record 3.0' },
+        ],
+      },
+      {
+        id: 'nom-directors',
+        title: 'Nominations — Directors',
+        subtitle: 'Individual excellence',
+        icon: 'users',
+        kind: 'nomination',
+        labelIsCategory: true,
+        items: [
+          { label: 'Outstanding President', winner: 'Rtr. Pranati Chheda' },
+          { label: 'Outstanding Secretary', winner: 'Rtr. Ariha Sheth' },
+          { label: 'Outstanding Pres–Sec Relations', winner: 'Rtr. Ariha Sheth & Rtr. Pranati Chheda' },
+          { label: 'Outstanding Club Service Director', winner: 'Rtr. Moksha Shah' },
+          { label: 'Outstanding Community Service Director', winner: 'Rtr. Smit Shah' },
+          { label: 'Outstanding Digital Communications Director', winner: 'Rtr. Mokshita Shah' },
+          { label: 'Outstanding Social Media Director', winner: 'Rtr. Hitansh Khona' },
+          { label: 'Outstanding New Comer', winner: 'Rtr. Jiya' },
+        ],
+      },
+    ],
   },
-  {
-    id: 'a2',
-    title: 'Flagship Blood Donation Drive',
-    org: 'Community Service',
-    date: '2026',
-    category: 'Impact',
-    description:
-      'JeevanDaan united members and citizens to collect life-saving blood units in a single day.',
-  },
-  {
-    id: 'a3',
-    title: 'World Youth Skills Day Session',
-    org: 'International Service',
-    date: '2026',
-    category: 'Recognition',
-    description:
-      'Hosted a cross-district skill-building session bridging international best practices with local impact.',
-  },
-  {
-    id: 'a4',
-    title: 'Chartered under RID 3141',
-    org: 'Rotary International',
-    date: '2015',
-    category: 'Milestone',
-    description:
-      'Officially chartered as a Rotaract club under Rotary International District 3141.',
-  },
-  {
-    id: 'a5',
-    title: 'Best Club Initiative — District Nomination',
-    org: 'RID 3141',
-    date: '2026',
-    category: 'Award',
-    description:
-      'Recognised at district level for an outstanding community service initiative. (Placeholder — update with the exact award.)',
-  },
-  {
-    id: 'a6',
-    title: 'Seven Avenues of Service, Active',
-    org: 'RC Mumbai Salt City',
-    date: '2026',
-    category: 'Impact',
-    description:
-      'Ran projects spanning community, professional, international and sports avenues within a single year.',
-  },
-];
-
-/** TODO: replace with verified numbers. */
-export const ACHIEVEMENT_STATS: AchievementStat[] = [
-  { value: '12', label: 'Years of service' },
-  { value: '6+', label: 'Signature projects' },
-  { value: '40+', label: 'Active members' },
-  { value: '7', label: 'Avenues of service' },
 ];
