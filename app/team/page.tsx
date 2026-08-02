@@ -23,11 +23,12 @@ const BOARD: BoardMember[] = [
   { name: 'Kashvi Kothari', role: 'Secretary', image: '/images/team/kashvi.jpg', focal: '40% 13%', zoom: '320%' },
   { name: 'Romil Lodaya', role: 'Vice President', image: '/images/team/romil.jpg', focal: '48% 27%', zoom: '210%' },
   { name: 'Hriday Kataria', role: 'Vice President', image: '/images/team/hriday.jpg', focal: '47% 27%', zoom: '210%' },
-  { name: 'Krisha Panchal', role: 'Joint Secretary', image: '/images/team/krisha.jpg', focal: '50% 30%', zoom: '185%' },
   { name: 'Shreedhee Ved', role: 'Joint Secretary', image: '/images/team/shreedhee.jpg', focal: '43% 28%', zoom: '215%' },
   { name: 'Aayush Shah', role: 'Sergeant At Arms', image: '/images/team/aayush.jpg', focal: '52% 42%', zoom: '165%' },
   { name: 'Hiya Doshi', role: 'HRD', image: '/images/team/hiya.jpg', focal: '58% 30%', zoom: '230%' },
   { name: 'Yash Thakkar', role: 'Treasurer', image: '/images/team/yash.jpg', focal: '44% 30%', zoom: '200%' },
+  { name: 'Priyal Shah', role: 'Joint Treasurer' },
+  { name: 'Bhargavi Vadluri', role: 'Joint Treasurer' },
 ];
 
 function initials(name: string): string {
