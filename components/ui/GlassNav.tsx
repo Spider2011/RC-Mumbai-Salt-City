@@ -43,11 +43,11 @@ export function GlassNav() {
         animate="visible"
         className="fixed inset-x-4 top-4 z-30 flex items-center justify-between md:inset-x-6"
       >
-        {/* Logo */}
+        {/* Logo lockup: club logo · divider · year logo */}
         <Link
           href="/"
           aria-label={`${SITE.shortName} home`}
-          className="flex h-16 w-16 items-center justify-center rounded-full transition-transform hover:scale-105"
+          className="flex items-center gap-3 transition-transform hover:scale-[1.03]"
         >
           <Image
             src="/images/logo.png"
@@ -56,6 +56,15 @@ export function GlassNav() {
             height={64}
             priority
             className="h-16 w-16 rounded-full"
+          />
+          <span aria-hidden className="h-10 w-px bg-white/20" />
+          <Image
+            src="/images/year-logo.png"
+            alt="अन्त अस्ति प्रारम्भ — the year theme"
+            width={64}
+            height={64}
+            priority
+            className="h-14 w-14"
           />
         </Link>
 
