@@ -64,7 +64,7 @@ export function GlassNav() {
             width={64}
             height={64}
             priority
-            className="h-14 w-14"
+            className="h-16 w-16"
           />
         </Link>
 
