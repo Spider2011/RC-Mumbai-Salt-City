@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { ScrollReveal } from '@/components/effects/ScrollReveal';
 import { EventsTimeline } from '@/components/sections/EventsTimeline';
 import { Footer } from '@/components/sections/Footer';
-import { EVENTS } from '@/lib/events';
+import { EVENTS, getEventStatus } from '@/lib/events';
 import { SITE } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -12,6 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default function EventsPage() {
+  const initialStatuses = EVENTS.map((event) => getEventStatus(event));
+
   return (
     <>
       <PageHeader
@@ -31,7 +33,7 @@ export default function EventsPage() {
             The wheel of the year
           </h2>
         </ScrollReveal>
-        <EventsTimeline events={EVENTS} />
+        <EventsTimeline events={EVENTS} initialStatuses={initialStatuses} />
       </div>
 
       <Footer />

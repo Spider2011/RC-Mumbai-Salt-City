@@ -1,11 +1,11 @@
-import type { Event as ClubEvent } from '@/types';
+import type { Event as ClubEvent, EventStatus } from '@/types';
 
 /**
- * Single source of truth for club events. Consumed by the events list page,
- * the timeline, and the /events/[slug] detail pages.
+ * Single source of truth for club events.
  *
- * Classification (past / upcoming) is relative to the club's working date.
- * Past events carry a `gallery`; upcoming events open a registration form.
+ * Status (past / ongoing / upcoming) is computed live from `start`/`end`
+ * (see getEventStatus) rather than stored — no manual updates needed as time
+ * passes. Times are IST (+05:30). All-day events span 00:00–23:59 of the day.
  */
 export const EVENTS: ClubEvent[] = [
   {
@@ -13,6 +13,8 @@ export const EVENTS: ClubEvent[] = [
     slug: 'jeevandaan-blood-donation-drive',
     title: 'JeevanDaan — Blood Donation Drive',
     date: '5th July 2026',
+    start: '2026-07-05T09:00:00+05:30',
+    end: '2026-07-05T15:00:00+05:30',
     avenue: 'Community Service',
     description:
       'Our flagship community service initiative — a blood donation camp uniting members and citizens in the act of giving life.',
@@ -26,13 +28,14 @@ export const EVENTS: ClubEvent[] = [
       { length: 40 },
       (_, i) => `/images/jeevandaan/web/${String(i + 1).padStart(2, '0')}.jpg`
     ),
-    type: 'past',
   },
   {
     id: 'e2',
     slug: 'world-youth-skills-day',
     title: 'World Youth Skills Day',
     date: '15th July 2026',
+    start: '2026-07-15T17:00:00+05:30',
+    end: '2026-07-15T19:00:00+05:30',
     avenue: 'International Service',
     description:
       'A skill-building celebration bridging international best practices with local impact, open to Rotaractors across districts.',
@@ -46,46 +49,14 @@ export const EVENTS: ClubEvent[] = [
       { length: 14 },
       (_, i) => `/images/world-youth-skills-day/web/${String(i + 1).padStart(2, '0')}.jpg`
     ),
-    type: 'past',
-  },
-  {
-    id: 'e3',
-    slug: 'world-chess-day',
-    title: 'World Chess Day',
-    date: '20th July 2026',
-    avenue: 'International Service',
-    description:
-      'Celebrating the global game — an international collaboration promoting strategic thinking and cross-cultural fellowship.',
-    longDescription: [
-      'On World Chess Day, we celebrate the game that unites minds across borders. Our event promotes strategic thinking, patience, and cross-cultural fellowship through the universal language of chess.',
-      'Whether you are a grandmaster in the making or picking up your first pawn, there is a place for you at the board. Expect friendly matches, quick tactics, and plenty of good company.',
-      'Register below to reserve your seat — spaces are limited to keep the tournament well-paced.',
-    ],
-    location: 'TBA',
-    time: 'Evening',
-    type: 'upcoming',
-  },
-  {
-    id: 'e4',
-    slug: 'pickleball-tournament',
-    title: 'PickleBall Tournament',
-    date: '25th July 2026',
-    avenue: 'Sports',
-    description:
-      'Building camaraderie on the court — an inter-club sports event fostering teamwork, wellness, and friendly competition.',
-    longDescription: [
-      'Our PickleBall Tournament brings the fastest-growing sport in the world to the club. It is an inter-club event built around teamwork, wellness, and friendly competition.',
-      'Players of every level are welcome — we will group teams to keep matches fun and fair. Come for the rallies, stay for the camaraderie.',
-      'Register below to claim your spot on the court.',
-    ],
-    location: 'Playflex Pickleball Court',
-    type: 'upcoming',
   },
   {
     id: 'e5',
     slug: 'installation-ceremony',
     title: 'Installation Ceremony',
     date: '2nd August 2026',
+    start: '2026-08-02T18:00:00+05:30',
+    end: '2026-08-02T20:00:00+05:30',
     avenue: 'Vice President',
     image: '/images/events/installation/invitation.jpg',
     description:
@@ -108,13 +79,14 @@ export const EVENTS: ClubEvent[] = [
     ],
     location: 'Mewad Kesari Bhavan, Bhandup West',
     time: '6:00 PM – 8:00 PM',
-    type: 'upcoming',
   },
   {
     id: 'e6',
     slug: 'oh-my-friend-ganesha',
     title: 'Oh My Friend Ganesha',
     date: '14th September 2026',
+    start: '2026-09-14T00:00:00+05:30',
+    end: '2026-09-14T23:59:59+05:30',
     avenue: 'Club Service',
     description:
       'A festive club service initiative celebrating the spirit of Ganesh Chaturthi with the community.',
@@ -124,10 +96,33 @@ export const EVENTS: ClubEvent[] = [
       'Register below to be part of the celebration.',
     ],
     location: 'TBA',
-    type: 'upcoming',
   },
 ];
 
 export function getEventBySlug(slug: string): ClubEvent | undefined {
   return EVENTS.find((event) => event.slug === slug);
+}
+
+/**
+ * Live status of an event relative to `now` (defaults to the current time).
+ * Pure and safe on server or client — pass an explicit `now` for stable
+ * server renders, omit it for the real current time on the client.
+ */
+export function getEventStatus(event: ClubEvent, now: Date = new Date()): EventStatus {
+  const start = new Date(event.start).getTime();
+  const end = event.end ? new Date(event.end).getTime() : start;
+  const t = now.getTime();
+  if (t < start) return 'upcoming';
+  if (t > end) return 'past';
+  return 'ongoing';
+}
+
+/** Label + accent colours for a status badge. */
+export function statusMeta(
+  status: EventStatus,
+  pastLabel = 'Past'
+): { label: string; color: string; border: string } {
+  if (status === 'ongoing') return { label: 'Ongoing', color: '#4ade80', border: 'rgba(74,222,128,0.55)' };
+  if (status === 'past') return { label: pastLabel, color: 'var(--text-muted)', border: 'rgba(245,245,247,0.2)' };
+  return { label: 'Upcoming', color: 'var(--accent-gold)', border: 'rgba(212,175,55,0.5)' };
 }

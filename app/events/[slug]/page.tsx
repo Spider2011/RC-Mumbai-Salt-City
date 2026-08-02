@@ -8,10 +8,9 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GoldDivider } from '@/components/ui/GoldDivider';
 import { ScrollReveal } from '@/components/effects/ScrollReveal';
-import { EventGallery } from '@/components/sections/EventGallery';
-import { EventRegisterForm } from '@/components/sections/EventRegisterForm';
+import { EventDetailBody } from '@/components/sections/EventDetailBody';
 import { Footer } from '@/components/sections/Footer';
-import { EVENTS, getEventBySlug } from '@/lib/events';
+import { EVENTS, getEventBySlug, getEventStatus } from '@/lib/events';
 
 interface EventPageProps {
   params: Promise<{ slug: string }>;
@@ -85,13 +84,12 @@ export default async function EventDetailPage({ params }: EventPageProps) {
   const event = getEventBySlug(slug);
   if (!event) notFound();
 
-  const isPast = event.type === 'past';
-  const hasGallery = isPast && event.gallery && event.gallery.length > 0;
+  const initialStatus = getEventStatus(event);
 
   return (
     <>
       <PageHeader
-        eyebrow={isPast ? 'Recap' : 'Upcoming'}
+        eyebrow={event.avenue ?? 'Event'}
         sanskrit="समय"
         title={event.title}
         subtitle={event.description}
@@ -137,42 +135,8 @@ export default async function EventDetailPage({ params }: EventPageProps) {
           </GlassCard>
         </ScrollReveal>
 
-        {/* Past → gallery; Upcoming → registration form */}
-        {hasGallery ? (
-          <>
-            <GoldDivider className="my-16" animate />
-            <ScrollReveal>
-              <h2 className="font-display mb-8 text-3xl font-light text-[var(--text-primary)]">
-                Gallery
-              </h2>
-            </ScrollReveal>
-            <EventGallery images={event.gallery!} eventTitle={event.title} />
-          </>
-        ) : isPast ? (
-          <ScrollReveal>
-            <GlassCard className="mt-8 p-10 text-center" tilt={false}>
-              <p className="text-[var(--text-secondary)]">
-                Photos from this event will appear here soon.
-              </p>
-            </GlassCard>
-          </ScrollReveal>
-        ) : (
-          <>
-            <GoldDivider className="my-16" animate />
-            <ScrollReveal>
-              <h2 className="font-display mb-3 text-3xl font-light text-[var(--text-primary)]">
-                Register
-              </h2>
-              <p className="mb-8 max-w-xl text-[var(--text-secondary)]">
-                Reserve your place for {event.title}. We&apos;ll email the final details ahead of the
-                day.
-              </p>
-            </ScrollReveal>
-            <ScrollReveal>
-              <EventRegisterForm eventTitle={event.title} />
-            </ScrollReveal>
-          </>
-        )}
+        {/* Past → gallery; ongoing/upcoming → registration form (live status) */}
+        <EventDetailBody event={event} initialStatus={initialStatus} />
       </div>
 
       <Footer />

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -11,11 +11,14 @@ import {
 } from 'framer-motion';
 import { ArrowRight, CalendarDays, Clock } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { getEventStatus, statusMeta } from '@/lib/events';
 import { cn } from '@/lib/utils';
-import type { Event as ClubEvent } from '@/types';
+import type { Event as ClubEvent, EventStatus } from '@/types';
 
 interface EventsTimelineProps {
   events: ClubEvent[];
+  /** Server-computed status per event (aligned to `events`) for first render. */
+  initialStatuses: EventStatus[];
 }
 
 const nodePulse: Variants = {
@@ -40,10 +43,22 @@ const cardReveal: Variants = {
  * Vertical gold timeline for the Events page. The line draws itself as you
  * scroll (scaleY, compositor-only); each event node pulses once on entering
  * the viewport. Left rail on mobile, centered alternating cards on desktop.
+ *
+ * Status badges are computed live from each event's date/time (see the `now`
+ * state) so cards flip upcoming → ongoing → past on their own.
  */
-export function EventsTimeline({ events }: EventsTimelineProps) {
+export function EventsTimeline({ events, initialStatuses }: EventsTimelineProps) {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
+
+  // null on the server + first client render (matches `initialStatuses`);
+  // set on mount and refreshed each minute for live status.
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -66,62 +81,65 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
       />
 
       <ol className="space-y-10">
-        {events.map((event, i) => (
-          <li key={event.id} className="relative pl-10 md:pl-0">
-            {/* Node — pulses once when it enters the viewport */}
-            <motion.span
-              aria-hidden
-              variants={reduceMotion ? undefined : nodePulse}
-              initial={reduceMotion ? undefined : 'hidden'}
-              whileInView="visible"
-              viewport={{ once: true, margin: '-15% 0px -15% 0px' }}
-              className="absolute left-[5px] top-8 h-[13px] w-[13px] rounded-full bg-[var(--accent-gold)] shadow-[0_0_14px_rgba(212,175,55,0.85)] md:left-1/2 md:ml-[-6.5px]"
-            />
+        {events.map((event, i) => {
+          const status: EventStatus =
+            now == null ? initialStatuses[i] : getEventStatus(event, new Date(now));
+          const badge = statusMeta(status);
+          const isPast = status === 'past';
 
-            <motion.div
-              variants={reduceMotion ? undefined : cardReveal}
-              initial={reduceMotion ? undefined : 'hidden'}
-              whileInView="visible"
-              viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
-              className={cn('md:w-[calc(50%-2.5rem)]', i % 2 === 1 && 'md:ml-auto')}
-            >
-              <Link href={`/events/${event.slug}`} className="group block h-full">
-                <GlassCard className="flex h-full flex-col p-7" tilt={false}>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-2 text-sm text-[var(--accent-gold)]">
-                      {event.type === 'upcoming' ? (
-                        <Clock className="h-4 w-4" />
-                      ) : (
-                        <CalendarDays className="h-4 w-4" />
-                      )}
-                      {event.date}
-                    </span>
+          return (
+            <li key={event.id} className="relative pl-10 md:pl-0">
+              {/* Node — pulses once when it enters the viewport */}
+              <motion.span
+                aria-hidden
+                variants={reduceMotion ? undefined : nodePulse}
+                initial={reduceMotion ? undefined : 'hidden'}
+                whileInView="visible"
+                viewport={{ once: true, margin: '-15% 0px -15% 0px' }}
+                className="absolute left-[5px] top-8 h-[13px] w-[13px] rounded-full bg-[var(--accent-gold)] shadow-[0_0_14px_rgba(212,175,55,0.85)] md:left-1/2 md:ml-[-6.5px]"
+              />
+
+              <motion.div
+                variants={reduceMotion ? undefined : cardReveal}
+                initial={reduceMotion ? undefined : 'hidden'}
+                whileInView="visible"
+                viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
+                className={cn('md:w-[calc(50%-2.5rem)]', i % 2 === 1 && 'md:ml-auto')}
+              >
+                <Link href={`/events/${event.slug}`} className="group block h-full">
+                  <GlassCard className="flex h-full flex-col p-7" tilt={false}>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="inline-flex items-center gap-2 text-sm text-[var(--accent-gold)]">
+                        {isPast ? <CalendarDays className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
+                        {event.date}
+                      </span>
+                      <span
+                        className="rounded-full border px-2.5 py-0.5 text-[0.65rem] uppercase tracking-wide"
+                        style={{ color: badge.color, borderColor: badge.border }}
+                        suppressHydrationWarning
+                      >
+                        {badge.label}
+                      </span>
+                    </div>
+                    <h3 className="font-display mt-3 text-2xl text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent-gold)]">
+                      {event.title}
+                    </h3>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--text-secondary)]">
+                      {event.description}
+                    </p>
                     <span
-                      className={cn(
-                        'rounded-full border px-2.5 py-0.5 text-[0.65rem] uppercase tracking-wide',
-                        event.type === 'upcoming'
-                          ? 'border-[var(--accent-gold)]/50 text-[var(--accent-gold)]'
-                          : 'border-white/20 text-[var(--text-muted)]'
-                      )}
+                      className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-gold)]"
+                      suppressHydrationWarning
                     >
-                      {event.type === 'upcoming' ? 'Upcoming' : 'Past'}
+                      {isPast ? 'View gallery' : 'Register'}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </span>
-                  </div>
-                  <h3 className="font-display mt-3 text-2xl text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent-gold)]">
-                    {event.title}
-                  </h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--text-secondary)]">
-                    {event.description}
-                  </p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-gold)]">
-                    {event.type === 'upcoming' ? 'Register' : 'View gallery'}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </GlassCard>
-              </Link>
-            </motion.div>
-          </li>
-        ))}
+                  </GlassCard>
+                </Link>
+              </motion.div>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );

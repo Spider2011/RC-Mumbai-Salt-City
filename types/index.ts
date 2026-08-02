@@ -24,12 +24,20 @@ export interface TeamMember {
   bio?: string;
 }
 
+/** Live status derived from the event's start/end vs the current time. */
+export type EventStatus = 'past' | 'ongoing' | 'upcoming';
+
 export interface Event {
   id: string;
   /** URL slug — /events/[slug] */
   slug: string;
   title: string;
+  /** Human-readable date shown in the UI, e.g. "2nd August 2026". */
   date: string;
+  /** Machine start (ISO 8601 with offset) — drives the live status. */
+  start: string;
+  /** Machine end (ISO 8601 with offset). Defaults to `start` when omitted. */
+  end?: string;
   /** Short one-liner used on the timeline. */
   description: string;
   /** Full multi-paragraph description shown on the detail page. */
@@ -43,7 +51,6 @@ export interface Event {
   image?: string;
   /** Photo gallery paths — shown on the detail page for past events. */
   gallery?: string[];
-  type: 'upcoming' | 'past';
 }
 
 export interface Project {
