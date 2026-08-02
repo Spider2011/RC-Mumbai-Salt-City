@@ -27,7 +27,7 @@ const BOARD: BoardMember[] = [
   { name: 'Aayush Shah', role: 'Sergeant At Arms', image: '/images/team/aayush.jpg', focal: '52% 42%', zoom: '165%' },
   { name: 'Hiya Doshi', role: 'HRD', image: '/images/team/hiya.jpg', focal: '58% 30%', zoom: '230%' },
   { name: 'Yash Thakkar', role: 'Treasurer', image: '/images/team/yash.jpg', focal: '44% 30%', zoom: '200%' },
-  { name: 'Priyal Shah', role: 'Joint Treasurer', image: '/images/team/priyal.jpg', focal: '40% 16%', zoom: '250%' },
+  { name: 'Priyal Shah', role: 'Joint Treasurer', image: '/images/team/priyal.jpg', focal: '40% 9%', zoom: '250%' },
   { name: 'Bhargavi Vadluri', role: 'Joint Treasurer', image: '/images/team/bhargavi.jpg', focal: '51% 24%', zoom: '235%' },
 ];
 
