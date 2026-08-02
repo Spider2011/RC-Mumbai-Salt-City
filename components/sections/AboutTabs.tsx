@@ -7,8 +7,8 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { GoldDivider } from '@/components/ui/GoldDivider';
 import { SITE, THEME_PILLARS } from '@/lib/constants';
 
-type Tab = 'Our Club' | 'District 3141';
-const TABS: Tab[] = ['Our Club', 'District 3141'];
+type Tab = 'Rotaract Club of Mumbai Salt City' | 'District 3141';
+const TABS: Tab[] = ['Rotaract Club of Mumbai Salt City', 'District 3141'];
 
 function OurClubContent() {
   return (
@@ -158,23 +158,23 @@ function DistrictContent() {
 export function AboutTabs() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const [active, setActive] = useState<Tab>(tabParam === 'district' ? 'District 3141' : 'Our Club');
+  const [active, setActive] = useState<Tab>(tabParam === 'district' ? 'District 3141' : 'Rotaract Club of Mumbai Salt City');
 
   // Keep the tab in sync when the nav dropdown navigates to /about?tab=district
   // while this page is already mounted.
   useEffect(() => {
-    setActive(tabParam === 'district' ? 'District 3141' : 'Our Club');
+    setActive(tabParam === 'district' ? 'District 3141' : 'Rotaract Club of Mumbai Salt City');
   }, [tabParam]);
 
   return (
     <>
       {/* Tab bar */}
-      <div className="mb-10 flex gap-2 border-b border-white/10 pb-0">
+      <div className="mb-10 flex flex-wrap gap-x-2 gap-y-1 border-b border-white/10 pb-0">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActive(tab)}
-            className="relative px-5 pb-4 pt-1 text-sm transition-colors"
+            className="relative whitespace-nowrap px-5 pb-4 pt-1 text-sm transition-colors"
             style={{
               color: active === tab ? 'var(--accent-gold)' : 'var(--text-secondary)',
             }}
@@ -200,7 +200,7 @@ export function AboutTabs() {
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
         >
-          {active === 'Our Club' ? <OurClubContent /> : <DistrictContent />}
+          {active === 'Rotaract Club of Mumbai Salt City' ? <OurClubContent /> : <DistrictContent />}
         </motion.div>
       </AnimatePresence>
     </>
