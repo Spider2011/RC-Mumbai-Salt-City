@@ -90,11 +90,11 @@ function DistrictContent() {
     <div className="space-y-8">
       <GlassCard className="p-8 md:p-12" tilt={false}>
         <h2 className="font-display text-3xl font-light text-[var(--text-primary)]">
-          Rotary International District 3141
+          District 3141
         </h2>
         <p className="mt-5 leading-relaxed text-[var(--text-secondary)]">
-          District 3141 is one of Rotary International&apos;s most vibrant districts, encompassing
-          Mumbai and the Konkan coast. It brings together hundreds of Rotary and Rotaract clubs
+          District 3141 is one of Rotary International&apos;s most vibrant districts, covering the
+          Mumbai and Palghar region. It brings together hundreds of Rotary and Rotaract clubs
           united by a shared commitment to humanitarian service, fellowship, and ethical leadership.
         </p>
         <p className="mt-4 leading-relaxed text-[var(--text-secondary)]">
@@ -111,7 +111,7 @@ function DistrictContent() {
           </h3>
           <p className="font-display mt-2 text-3xl font-light text-[var(--text-primary)]">RID 3141</p>
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
-            Rotary International District covering Greater Mumbai and the Konkan region.
+            District covering the Mumbai and Palghar region.
           </p>
         </GlassCard>
 
@@ -148,16 +148,6 @@ function DistrictContent() {
             To provide young people with opportunities to enhance the knowledge and skills that will
             assist them in personal development, address the physical and social needs of their
             communities, and promote better relations between all people worldwide.
-          </p>
-        </GlassCard>
-
-        <GlassCard className="p-7">
-          <h3 className="font-accent text-xs uppercase tracking-[0.2em] text-[var(--accent-gold)]">
-            Our Sponsor Club
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-            The Rotaract Club of Mumbai Salt City is sponsored by the Rotary Club of Mumbai Salt
-            City, which mentors the club and supports its initiatives under the District 3141 umbrella.
           </p>
         </GlassCard>
       </div>
