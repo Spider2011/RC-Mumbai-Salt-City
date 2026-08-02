@@ -116,7 +116,14 @@ export function SelectField({ value, onChange, children, ...rest }: SelectProps)
         required={rest.required}
         aria-invalid={Boolean(rest.error)}
         onChange={(e) => onChange(e.target.value)}
-        className={cn(fieldClasses, 'cursor-pointer appearance-none', rest.error && 'border-[var(--accent-sunrise-from)]/60')}
+        className={cn(
+          fieldClasses,
+          'cursor-pointer appearance-none',
+          // Native dropdown options render on a light popup by default, making
+          // the light select text invisible — force a readable dark option style.
+          '[&_option]:bg-[#141a2e] [&_option]:text-[#f5f5f7]',
+          rest.error && 'border-[var(--accent-sunrise-from)]/60'
+        )}
       >
         {children}
       </select>
