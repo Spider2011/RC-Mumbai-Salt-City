@@ -79,6 +79,11 @@ export const EVENTS: ClubEvent[] = [
     ],
     location: 'Mewad Kesari Bhavan, Bhandup West',
     time: '6:00 PM – 8:00 PM',
+    galleryVariant: 'circular',
+    gallery: Array.from(
+      { length: 20 },
+      (_, i) => `/images/events/installation/gallery/${String(i + 1).padStart(2, '0')}.jpg`
+    ),
   },
   {
     id: 'e6',

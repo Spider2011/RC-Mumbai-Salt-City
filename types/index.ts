@@ -51,6 +51,8 @@ export interface Event {
   image?: string;
   /** Photo gallery paths — shown on the detail page for past events. */
   gallery?: string[];
+  /** How the gallery renders: horizontal scroll strip (default) or a 3D circular gallery. */
+  galleryVariant?: 'scroll' | 'circular';
 }
 
 export interface Project {

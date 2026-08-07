@@ -1,10 +1,12 @@
 'use client';
 
+import { useMemo } from 'react';
 import { GoldDivider } from '@/components/ui/GoldDivider';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ScrollReveal } from '@/components/effects/ScrollReveal';
 import { EventGallery } from '@/components/sections/EventGallery';
 import { EventRegisterForm } from '@/components/sections/EventRegisterForm';
+import CircularGallery from '@/components/effects/CircularGallery';
 import { useEventStatus } from '@/lib/use-event-status';
 import type { Event as ClubEvent, EventStatus } from '@/types';
 
@@ -21,6 +23,12 @@ interface EventDetailBodyProps {
 export function EventDetailBody({ event, initialStatus }: EventDetailBodyProps) {
   const status = useEventStatus(event, initialStatus);
   const hasGallery = status === 'past' && event.gallery && event.gallery.length > 0;
+
+  // Stable items array for the circular gallery (no text labels — photos only).
+  const circularItems = useMemo(
+    () => (event.gallery ?? []).map((image) => ({ image, text: '' })),
+    [event.gallery]
+  );
 
   if (status === 'past') {
     if (!hasGallery) {
@@ -42,7 +50,21 @@ export function EventDetailBody({ event, initialStatus }: EventDetailBodyProps) 
             Gallery
           </h2>
         </ScrollReveal>
-        <EventGallery images={event.gallery!} eventTitle={event.title} />
+        {event.galleryVariant === 'circular' ? (
+          <div className="relative -mx-6 h-[460px] md:h-[560px]">
+            <CircularGallery
+              items={circularItems}
+              bend={2.5}
+              textColor="#f5f5f7"
+              borderRadius={0.05}
+              scrollEase={0.02}
+              font="bold 24px sans-serif"
+              fontUrl={undefined}
+            />
+          </div>
+        ) : (
+          <EventGallery images={event.gallery!} eventTitle={event.title} />
+        )}
       </>
     );
   }
