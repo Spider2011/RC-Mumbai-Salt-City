@@ -81,7 +81,7 @@ export const EVENTS: ClubEvent[] = [
     time: '6:00 PM – 8:00 PM',
     galleryVariant: 'circular',
     gallery: Array.from(
-      { length: 20 },
+      { length: 32 },
       (_, i) => `/images/events/installation/gallery/${String(i + 1).padStart(2, '0')}.jpg`
     ),
   },
