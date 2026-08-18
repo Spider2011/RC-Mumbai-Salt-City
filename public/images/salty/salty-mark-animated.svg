@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    circle { transform-box: fill-box; transform-origin: center; animation: saltyPulse 1.8s ease-in-out infinite; }
+    .d2 { animation-delay: .22s } .d3 { animation-delay: .44s } .d4 { animation-delay: .66s }
+    @keyframes saltyPulse { 0%,100% { transform: scale(1); opacity:.82 } 50% { transform: scale(1.16); opacity:1 } }
+    @media (prefers-reduced-motion: reduce) { circle { animation: none } }
+  </style>
+  <circle cx="42" cy="34" r="10" fill="#efe9df"/>
+  <circle class="d2" cx="64" cy="45" r="7" fill="#efe9df"/>
+  <circle class="d3" cx="38" cy="59" r="6" fill="#efe9df"/>
+  <circle class="d4" cx="57" cy="65" r="8.5" fill="#b68235"/>
+</svg>

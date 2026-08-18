@@ -1,12 +1,16 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { CHAT_TOPICS, GREETING, type ChatAnswer, type ChatLink } from '@/lib/chatbot';
 import { cn } from '@/lib/utils';
+
+// Salty brand marks (see public/images/salty/).
+const SALTY_APP_ICON = '/images/salty/salty-app-icon.svg'; // static badge — the button
+const SALTY_MARK_ANIMATED = '/images/salty/salty-mark-animated.svg'; // animated dots — header
+const SALTY_MARK_DARK = '/images/salty/salty-mark-dark.svg'; // static mark — bot avatars
 
 type Message =
   | { role: 'user'; text: string }
@@ -44,8 +48,23 @@ function AnswerLinks({ links, onNavigate }: { links: ChatLink[]; onNavigate: () 
   );
 }
 
+/** Small dark badge holding a Salty mark, used as the bot avatar. */
+function SaltyAvatar({ src, className }: { src: string; className?: string }) {
+  return (
+    <span
+      className={cn(
+        'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/10 bg-[#17150f]',
+        className
+      )}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt="" aria-hidden className="h-[70%] w-[70%]" />
+    </span>
+  );
+}
+
 /**
- * Scripted "RCMSC assistant" — a floating widget with fixed inputs (preset
+ * Scripted "Salty" assistant — a floating widget with fixed inputs (preset
  * question chips) and fixed outputs (canned answers computed live from site
  * data). No backend, no LLM. Glass-styled, reduced-motion aware, keyboard
  * accessible.
@@ -102,7 +121,11 @@ export function ChatBot() {
             {/* Header */}
             <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
               <div className="flex items-center gap-3">
-                <Image src="/images/salty.png" alt="Salty emblem" width={40} height={40} className="h-10 w-10 rounded-full" />
+                {/* Animated Salty mark */}
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--accent-gold)]/25 bg-[#17150f]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={SALTY_MARK_ANIMATED} alt="" aria-hidden className="h-7 w-7" />
+                </span>
                 <div>
                   <p className="font-display text-lg leading-none text-[var(--text-primary)]">Salty</p>
                   <p className="mt-1 text-xs text-[var(--text-muted)]">Tap a question to begin</p>
@@ -127,8 +150,9 @@ export function ChatBot() {
                     </div>
                   </div>
                 ) : (
-                  <div key={i} className="flex justify-start">
-                    <div className="max-w-[90%] rounded-2xl rounded-bl-sm border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                  <div key={i} className="flex justify-start gap-2">
+                    <SaltyAvatar src={SALTY_MARK_DARK} className="mt-0.5" />
+                    <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                       {m.answer.lines.map((line, j) => (
                         <p key={j} className={cn(j > 0 && 'mt-2')}>
                           {line}
@@ -159,14 +183,14 @@ export function ChatBot() {
         )}
       </AnimatePresence>
 
-      {/* Floating button */}
+      {/* Floating button — the Salty app icon */}
       <motion.button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close chat' : 'Open Salty, the RCMSC assistant'}
         aria-expanded={open}
         whileHover={reduceMotion ? undefined : { scale: 1.06 }}
         whileTap={reduceMotion ? undefined : { scale: 0.94 }}
-        className="glass-glow fixed bottom-6 right-4 z-40 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-[var(--accent-gold)]/40 bg-[#12172a] text-[var(--accent-gold)] md:right-6"
+        className="glass-glow fixed bottom-6 right-4 z-40 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[var(--accent-gold)]/40 bg-[#17150f] text-[var(--accent-gold)] md:right-6"
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
@@ -181,14 +205,15 @@ export function ChatBot() {
             </motion.span>
           ) : (
             <motion.span
-              key="salty"
+              key="icon"
               className="absolute inset-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              <Image src="/images/salty.png" alt="Salty" fill sizes="56px" className="object-cover" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={SALTY_APP_ICON} alt="Salty" className="h-full w-full" />
             </motion.span>
           )}
         </AnimatePresence>
