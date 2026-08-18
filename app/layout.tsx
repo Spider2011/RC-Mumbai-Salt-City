@@ -11,6 +11,7 @@ import { Loader } from '@/components/effects/Loader';
 import { PageTransition } from '@/components/effects/PageTransition';
 import { ScrollProgressBar } from '@/components/effects/ScrollProgressBar';
 import { GlassNav } from '@/components/ui/GlassNav';
+import { ChatBot } from '@/components/effects/ChatBot';
 
 const cormorant = Cormorant_Garamond({
   variable: '--font-cormorant',
@@ -78,6 +79,7 @@ export default function RootLayout({
         <CustomCursor />
         <AmbientMandala />
         <ShlokaEasterEgg />
+        <ChatBot />
         <SmoothScroll>
           <GlassNav />
           <PageTransition>
