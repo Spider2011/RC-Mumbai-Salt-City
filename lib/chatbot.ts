@@ -24,7 +24,7 @@ export interface ChatTopic {
 }
 
 export const GREETING =
-  "Namaste! I'm the RCMSC assistant. Tap a question below and I'll help you out. 🌅";
+  "Namaste! I'm Salty, your RCMSC assistant. Tap a question below and I'll help you out. 🌅";
 
 export const CHAT_TOPICS: ChatTopic[] = [
   {

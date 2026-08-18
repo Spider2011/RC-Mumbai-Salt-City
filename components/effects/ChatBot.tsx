@@ -90,7 +90,7 @@ export function ChatBot() {
           <motion.div
             ref={panelRef}
             role="dialog"
-            aria-label="RCMSC assistant"
+            aria-label="Salty — RCMSC assistant"
             tabIndex={-1}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -102,7 +102,7 @@ export function ChatBot() {
             <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
               <div>
                 <p className="font-display text-lg leading-none text-[var(--text-primary)]">
-                  RCMSC Assistant
+                  Salty
                 </p>
                 <p className="mt-1 text-xs text-[var(--text-muted)]">Tap a question to begin</p>
               </div>
@@ -160,7 +160,7 @@ export function ChatBot() {
       {/* Floating button */}
       <motion.button
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Close chat' : 'Open the RCMSC assistant'}
+        aria-label={open ? 'Close chat' : 'Open Salty, the RCMSC assistant'}
         aria-expanded={open}
         whileHover={reduceMotion ? undefined : { scale: 1.06 }}
         whileTap={reduceMotion ? undefined : { scale: 0.94 }}
