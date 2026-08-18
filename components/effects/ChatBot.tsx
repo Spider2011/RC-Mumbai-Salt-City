@@ -9,8 +9,11 @@ import { cn } from '@/lib/utils';
 
 // Salty brand marks (see public/images/salty/).
 const SALTY_APP_ICON = '/images/salty/salty-app-icon.svg'; // static badge — the button
-const SALTY_MARK_ANIMATED = '/images/salty/salty-mark-animated.svg'; // animated dots — header
-const SALTY_MARK_DARK = '/images/salty/salty-mark-dark.svg'; // static mark — bot avatars
+const SALTY_MARK_ANIMATED = '/images/salty/salty-mark-animated.svg'; // animated dots — header + typing
+const SALTY_MARK_DARK = '/images/salty/salty-mark-dark.svg'; // static mark — delivered replies
+
+// How long Salty "thinks" before revealing an answer.
+const THINKING_MS = 10_000;
 
 type Message =
   | { role: 'user'; text: string }
@@ -63,23 +66,44 @@ function SaltyAvatar({ src, className }: { src: string; className?: string }) {
   );
 }
 
+/** Three bouncing dots — the "typing" indicator. */
+function TypingDots({ reduceMotion }: { reduceMotion: boolean | null }) {
+  if (reduceMotion) {
+    return <span className="text-sm text-[var(--text-muted)]">Salty is typing…</span>;
+  }
+  return (
+    <span className="flex items-center gap-1.5 py-1" aria-label="Salty is typing">
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          className="h-2 w-2 rounded-full bg-[var(--text-secondary)]"
+          animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
+          transition={{ duration: 1, repeat: Infinity, delay: i * 0.18, ease: 'easeInOut' }}
+        />
+      ))}
+    </span>
+  );
+}
+
 /**
  * Scripted "Salty" assistant — a floating widget with fixed inputs (preset
  * question chips) and fixed outputs (canned answers computed live from site
- * data). No backend, no LLM. Glass-styled, reduced-motion aware, keyboard
- * accessible.
+ * data). Shows a thinking/typing indicator before each reply. No backend,
+ * no LLM. Glass-styled, reduced-motion aware, keyboard accessible.
  */
 export function ChatBot() {
   const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([{ role: 'bot', answer: { lines: [GREETING] } }]);
+  const [typing, setTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Keep the conversation scrolled to the latest message.
+  // Keep the conversation scrolled to the latest message / typing indicator.
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages, open]);
+  }, [messages, typing, open]);
 
   // Esc closes; focus the panel when it opens.
   useEffect(() => {
@@ -92,14 +116,22 @@ export function ChatBot() {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
+  // Clear any pending "thinking" timer on unmount.
+  useEffect(() => () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, []);
+
   function ask(topicId: string) {
+    if (typing) return; // one question at a time
     const topic = CHAT_TOPICS.find((t) => t.id === topicId);
     if (!topic) return;
-    setMessages((prev) => [
-      ...prev,
-      { role: 'user', text: topic.question },
-      { role: 'bot', answer: topic.answer() },
-    ]);
+    setMessages((prev) => [...prev, { role: 'user', text: topic.question }]);
+    setTyping(true);
+    timeoutRef.current = setTimeout(() => {
+      // Compute the answer at reveal time so it reflects current data.
+      setMessages((prev) => [...prev, { role: 'bot', answer: topic.answer() }]);
+      setTyping(false);
+    }, THINKING_MS);
   }
 
   return (
@@ -128,7 +160,9 @@ export function ChatBot() {
                 </span>
                 <div>
                   <p className="font-display text-lg leading-none text-[var(--text-primary)]">Salty</p>
-                  <p className="mt-1 text-xs text-[var(--text-muted)]">Tap a question to begin</p>
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    {typing ? 'Thinking…' : 'Tap a question to begin'}
+                  </p>
                 </div>
               </div>
               <button
@@ -165,6 +199,25 @@ export function ChatBot() {
                   </div>
                 )
               )}
+
+              {/* Thinking / typing indicator — animated Salty mark + bouncing dots */}
+              <AnimatePresence>
+                {typing && (
+                  <motion.div
+                    key="typing"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex justify-start gap-2"
+                  >
+                    <SaltyAvatar src={SALTY_MARK_ANIMATED} className="mt-0.5" />
+                    <div className="rounded-2xl rounded-bl-sm border border-white/10 bg-white/[0.04] px-4 py-3">
+                      <TypingDots reduceMotion={reduceMotion} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Quick-reply chips */}
@@ -173,7 +226,11 @@ export function ChatBot() {
                 <button
                   key={t.id}
                   onClick={() => ask(t.id)}
-                  className="rounded-full border border-white/12 px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-gold)]/40 hover:text-[var(--accent-gold)]"
+                  disabled={typing}
+                  className={cn(
+                    'rounded-full border border-white/12 px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-gold)]/40 hover:text-[var(--accent-gold)]',
+                    typing && 'pointer-events-none opacity-40'
+                  )}
                 >
                   {t.question}
                 </button>
