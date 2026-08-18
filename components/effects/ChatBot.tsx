@@ -1,9 +1,10 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { MessageCircle, X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { CHAT_TOPICS, GREETING, type ChatAnswer, type ChatLink } from '@/lib/chatbot';
 import { cn } from '@/lib/utils';
 
@@ -100,11 +101,12 @@ export function ChatBot() {
           >
             {/* Header */}
             <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
-              <div>
-                <p className="font-display text-lg leading-none text-[var(--text-primary)]">
-                  Salty
-                </p>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">Tap a question to begin</p>
+              <div className="flex items-center gap-3">
+                <Image src="/images/salty.png" alt="Salty emblem" width={40} height={40} className="h-10 w-10 rounded-full" />
+                <div>
+                  <p className="font-display text-lg leading-none text-[var(--text-primary)]">Salty</p>
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">Tap a question to begin</p>
+                </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
@@ -164,7 +166,7 @@ export function ChatBot() {
         aria-expanded={open}
         whileHover={reduceMotion ? undefined : { scale: 1.06 }}
         whileTap={reduceMotion ? undefined : { scale: 0.94 }}
-        className="glass-glow fixed bottom-6 right-4 z-40 bg-[#12172a] flex h-14 w-14 items-center justify-center rounded-full border border-[var(--accent-gold)]/40 text-[var(--accent-gold)] md:right-6"
+        className="glass-glow fixed bottom-6 right-4 z-40 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-[var(--accent-gold)]/40 bg-[#12172a] text-[var(--accent-gold)] md:right-6"
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
@@ -179,13 +181,14 @@ export function ChatBot() {
             </motion.span>
           ) : (
             <motion.span
-              key="chat"
-              initial={{ opacity: 0, rotate: 90 }}
-              animate={{ opacity: 1, rotate: 0 }}
-              exit={{ opacity: 0, rotate: -90 }}
+              key="salty"
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              <MessageCircle className="h-6 w-6" />
+              <Image src="/images/salty.png" alt="Salty" fill sizes="56px" className="object-cover" />
             </motion.span>
           )}
         </AnimatePresence>
