@@ -13,7 +13,7 @@ const SALTY_MARK_ANIMATED = '/images/salty/salty-mark-animated.svg'; // animated
 const SALTY_MARK_DARK = '/images/salty/salty-mark-dark.svg'; // static mark — delivered replies
 
 // How long Salty "thinks" before revealing an answer.
-const THINKING_MS = 10_000;
+const THINKING_MS = 1_500;
 
 type Message =
   | { role: 'user'; text: string }
