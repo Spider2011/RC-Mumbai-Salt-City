@@ -87,7 +87,11 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    const validFields = validate();
+    if (collectImage && !image) {
+      setImageError('Please upload your payment proof to register.');
+    }
+    if (!validFields || (collectImage && !image)) return;
     setSubmitting(true);
     setFailed(false);
     try {
@@ -187,7 +191,7 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
             {collectImage && (
               <div>
                 <label className="mb-2 block text-sm font-medium text-[var(--text-secondary)]">
-                  Upload your payment proof
+                  Upload your payment proof <span className="text-[var(--accent-gold)]">*</span>
                 </label>
                 <input
                   ref={fileInputRef}
