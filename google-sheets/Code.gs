@@ -75,6 +75,18 @@ function doGet() {
 }
 
 /**
+ * ONE-TIME: run this from the editor (pick `authorize` in the function
+ * dropdown, click Run) and approve the consent screen — this grants the
+ * Google Drive permission that photo uploads need. After approving, photo
+ * submissions will save to Drive. You only need to do this once.
+ */
+function authorize() {
+  const root = DriveApp.getRootFolder();
+  getOrCreateFolder(root, 'RCMSC Form Uploads');
+  Logger.log('Drive access granted. Photo uploads will now work.');
+}
+
+/**
  * Appends `data` to `sheet`, keeping columns aligned to the header row.
  * Unknown keys are added as new trailing columns automatically.
  */
