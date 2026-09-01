@@ -187,7 +187,7 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
             {collectImage && (
               <div>
                 <label className="mb-2 block text-sm font-medium text-[var(--text-secondary)]">
-                  Add a photo <span className="text-[var(--text-muted)]">(optional)</span>
+                  Upload your payment proof
                 </label>
                 <input
                   ref={fileInputRef}
@@ -225,7 +225,7 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-white/[0.03] px-4 py-6 text-sm text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-gold)]/40 hover:text-[var(--text-primary)] disabled:opacity-50"
                   >
                     <ImagePlus className="h-5 w-5 text-[var(--accent-gold)]" />
-                    {processingImage ? 'Processing…' : 'Choose an image'}
+                    {processingImage ? 'Processing…' : 'Upload payment proof'}
                   </button>
                 )}
                 {imageError && (
