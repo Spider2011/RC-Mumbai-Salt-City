@@ -102,6 +102,25 @@ export const EVENTS: ClubEvent[] = [
     ],
     location: 'TBA',
   },
+  {
+    id: 'e7',
+    slug: 'garba-gala',
+    title: 'Garba Gala',
+    date: '27th September 2026',
+    start: '2026-09-27T18:00:00+05:30',
+    end: '2026-09-27T23:00:00+05:30',
+    avenue: 'Club Service',
+    description:
+      'A night of garba, music, and festivity — dress up, twirl, and celebrate the season with the club.',
+    longDescription: [
+      'Garba Gala is our celebration of the festive season — an evening of garba, dandiya, music, and community. Bring your energy and your best traditional attire!',
+      'Whether you are a seasoned dancer or just there for the vibe and the food, there is a place for you on the floor.',
+      'Register below to reserve your spot — and add a photo with your sign-up if you like.',
+    ],
+    location: 'Grand Celebration Hall, Above Croma',
+    time: 'Evening',
+    collectImage: true,
+  },
 ];
 
 export function getEventBySlug(slug: string): ClubEvent | undefined {

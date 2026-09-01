@@ -87,7 +87,7 @@ export function EventDetailBody({ event, initialStatus }: EventDetailBodyProps) 
         </p>
       </ScrollReveal>
       <ScrollReveal>
-        <EventRegisterForm eventTitle={event.title} />
+        <EventRegisterForm eventTitle={event.title} collectImage={event.collectImage} />
       </ScrollReveal>
     </>
   );

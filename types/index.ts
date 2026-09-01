@@ -53,6 +53,8 @@ export interface Event {
   gallery?: string[];
   /** How the gallery renders: horizontal scroll strip (default) or a 3D circular gallery. */
   galleryVariant?: 'scroll' | 'circular';
+  /** Show an optional photo-upload field on this event's registration form. */
+  collectImage?: boolean;
 }
 
 export interface Project {
