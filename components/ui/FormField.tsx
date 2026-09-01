@@ -13,7 +13,7 @@ interface BaseProps {
 }
 
 interface InputProps extends BaseProps {
-  type?: 'text' | 'email' | 'tel' | 'url' | 'number';
+  type?: 'text' | 'email' | 'tel' | 'url' | 'number' | 'password';
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
