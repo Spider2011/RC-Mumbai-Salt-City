@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, ImagePlus, X } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
-import { TextField, TextAreaField } from '@/components/ui/FormField';
+import { TextField } from '@/components/ui/FormField';
 import { submitToSheet } from '@/lib/submit-form';
 import { compressImage, type CompressedImage } from '@/lib/image-upload';
 
@@ -20,7 +20,6 @@ interface FormState {
   email: string;
   phone: string;
   guests: string;
-  note: string;
 }
 
 type Errors = Partial<Record<keyof FormState, string>>;
@@ -35,7 +34,6 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
     email: '',
     phone: '',
     guests: '1',
-    note: '',
   });
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -101,7 +99,6 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
         email: form.email,
         phone: form.phone,
         attendees: form.guests,
-        note: form.note,
         ...(image
           ? { _imageData: image.base64, _imageName: image.name, _imageType: image.type }
           : {}),
@@ -186,14 +183,6 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
                 error={errors.guests}
               />
             </div>
-            <TextAreaField
-              label="Anything we should know?"
-              name="note"
-              value={form.note}
-              onChange={(v) => update('note', v)}
-              placeholder="Dietary needs, questions, or leave blank..."
-              hint="Optional."
-            />
 
             {collectImage && (
               <div>
