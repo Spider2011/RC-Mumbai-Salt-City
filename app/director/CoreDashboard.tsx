@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Users, MapPin, CalendarDays, ImageOff, X, ArrowRight } from 'lucide-react';
+import { LogOut, Users, MapPin, CalendarDays, ImageOff, X, ArrowRight, FileText } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { SelectField } from '@/components/ui/FormField';
 import { AVENUE_OPTIONS, type ProjectReportDetail } from '@/lib/director/schema';
@@ -127,6 +127,11 @@ export function CoreDashboard({ member, reports }: Props) {
                       {r.photoUrls.length} photo{r.photoUrls.length === 1 ? '' : 's'}
                     </span>
                   )}
+                  {r.reportDocUrl && (
+                    <span className="flex items-center gap-1.5 text-[var(--accent-gold)]">
+                      <FileText className="h-3.5 w-3.5" /> Report file
+                    </span>
+                  )}
                 </div>
 
                 <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[var(--text-secondary)]">
@@ -199,6 +204,18 @@ export function CoreDashboard({ member, reports }: Props) {
               <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-[var(--text-secondary)]">
                 {selected.description}
               </p>
+
+              {selected.reportDocUrl && (
+                <a
+                  href={selected.reportDocUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[var(--accent-gold)]/40 bg-[var(--accent-gold)]/[0.06] px-4 py-2.5 text-sm text-[var(--text-primary)] transition-colors hover:bg-[var(--accent-gold)]/10"
+                >
+                  <FileText className="h-4 w-4 text-[var(--accent-gold)]" />
+                  Open full report file
+                </a>
+              )}
 
               {selected.photoUrls.length > 0 ? (
                 <div className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-4">

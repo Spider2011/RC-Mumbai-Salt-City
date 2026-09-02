@@ -1,14 +1,17 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import { CheckCircle2, ClipboardList, ImagePlus, LogOut, X } from 'lucide-react';
+import { CheckCircle2, ClipboardList, FileText, ImagePlus, LogOut, X } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { TextField, TextAreaField, SelectField } from '@/components/ui/FormField';
 import { compressImage, type CompressedImage } from '@/lib/image-upload';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import {
+  ALLOWED_DOC_ACCEPT,
+  ALLOWED_DOC_EXTENSIONS,
   AVENUE_OPTIONS,
+  MAX_DOC_BYTES,
   MAX_REPORT_PHOTOS,
   validateReport,
   type Avenue,
@@ -45,6 +48,9 @@ export function DirectorDashboard({ director, reports }: Props) {
   const [processing, setProcessing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [reportDoc, setReportDoc] = useState<File | null>(null);
+  const docRef = useRef<HTMLInputElement>(null);
+
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -80,6 +86,23 @@ export function DirectorDashboard({ director, reports }: Props) {
     }
   }
 
+  function handleDoc(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setErrors((prev) => ({ ...prev, reportDoc: '' }));
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+    if (!(ALLOWED_DOC_EXTENSIONS as readonly string[]).includes(ext)) {
+      setErrors((prev) => ({ ...prev, reportDoc: 'Please upload a PDF or Word file (.pdf, .doc, .docx).' }));
+      return;
+    }
+    if (file.size > MAX_DOC_BYTES) {
+      setErrors((prev) => ({ ...prev, reportDoc: 'That file is too large (max 15MB).' }));
+      return;
+    }
+    setReportDoc(file);
+  }
+
   async function uploadPhotos(): Promise<string[]> {
     const paths: string[] = [];
     for (const photo of photos) {
@@ -94,18 +117,34 @@ export function DirectorDashboard({ director, reports }: Props) {
     return paths;
   }
 
+  async function uploadDoc(file: File): Promise<string> {
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'pdf';
+    const path = `${director.userId}/docs/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(path, file, {
+        contentType: file.type || 'application/octet-stream',
+        upsert: false,
+      });
+    if (error) throw new Error(error.message);
+    return path;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
 
     const check = validateReport({ title, avenue, projectDate, location, beneficiaries, description });
-    if (!check.ok) {
-      setErrors(check.errors);
+    const nextErrors = check.ok ? {} : { ...check.errors };
+    if (!reportDoc) nextErrors.reportDoc = 'Please attach your report document (PDF or Word).';
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
       return;
     }
 
     setSubmitting(true);
     try {
+      const docPath = await uploadDoc(reportDoc!);
       const photoPaths = await uploadPhotos();
 
       const fd = new FormData();
@@ -115,6 +154,7 @@ export function DirectorDashboard({ director, reports }: Props) {
       fd.set('location', location);
       fd.set('beneficiaries', beneficiaries);
       fd.set('description', description);
+      fd.set('reportDoc', docPath);
       photoPaths.forEach((p) => fd.append('photoPaths', p));
 
       const res = await submitReport(fd);
@@ -126,7 +166,7 @@ export function DirectorDashboard({ director, reports }: Props) {
         setFormError(res.message ?? 'Something went wrong. Please try again.');
       }
     } catch {
-      setFormError('Could not upload your photos. Please try again.');
+      setFormError('Could not upload your file. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -140,6 +180,7 @@ export function DirectorDashboard({ director, reports }: Props) {
     setBeneficiaries('');
     setDescription('');
     setPhotos([]);
+    setReportDoc(null);
     setErrors({});
     setFormError(null);
     setDone(false);
@@ -254,15 +295,61 @@ export function DirectorDashboard({ director, reports }: Props) {
             </div>
 
             <TextAreaField
-              label="What happened?"
+              label="Brief summary"
               name="description"
               value={description}
               onChange={(v) => set('description', v, setDescription)}
-              placeholder="Describe the project — what you did, who it served, and the outcome."
-              rows={6}
+              placeholder="A few lines on the project — what you did, who it served, and the outcome. (The full write-up goes in the report file below.)"
+              rows={4}
               required
               error={errors.description}
             />
+
+            {/* Report document (PDF / Word) */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-[var(--text-secondary)]">
+                Report file <span className="ml-1 text-[var(--accent-magenta)]">*</span>
+                <span className="ml-1 font-normal text-[var(--text-muted)]">(PDF or Word)</span>
+              </label>
+              <input
+                ref={docRef}
+                type="file"
+                accept={ALLOWED_DOC_ACCEPT}
+                onChange={handleDoc}
+                className="sr-only"
+                aria-label="Report file"
+              />
+              {reportDoc ? (
+                <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.04] p-3">
+                  <FileText className="h-5 w-5 shrink-0 text-[var(--accent-gold)]" />
+                  <span className="flex-1 truncate text-sm text-[var(--text-secondary)]">
+                    {reportDoc.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setReportDoc(null)}
+                    aria-label="Remove file"
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-white/10 hover:text-[var(--text-primary)]"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => docRef.current?.click()}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-white/[0.03] px-4 py-5 text-sm text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-gold)]/40 hover:text-[var(--text-primary)]"
+                >
+                  <FileText className="h-5 w-5 text-[var(--accent-gold)]" />
+                  Upload report (.pdf, .doc, .docx)
+                </button>
+              )}
+              {errors.reportDoc && (
+                <p className="mt-1.5 text-xs text-[var(--accent-sunrise-from)]" role="alert">
+                  {errors.reportDoc}
+                </p>
+              )}
+            </div>
 
             {/* Photos */}
             <div>

@@ -23,19 +23,23 @@ export default async function DirectorHomePage() {
     return <DirectorDashboard director={member} reports={(data ?? []) as ProjectReportRow[]} />;
   }
 
-  // Core members: every report (RLS allows it), with signed photo URLs resolved.
+  // Core members: every report (RLS allows it), with signed photo/doc URLs resolved.
   const { data } = await supabase
     .from('project_reports')
     .select(
-      'id, director_name, avenue, title, project_date, location, beneficiaries, description, photo_paths, created_at'
+      'id, director_name, avenue, title, project_date, location, beneficiaries, description, photo_paths, report_doc, created_at'
     )
     .order('created_at', { ascending: false })
     .limit(100);
 
-  const rows = (data ?? []) as Array<Omit<ProjectReportDetail, 'photoUrls'> & { photo_paths: string[] }>;
+  type RawRow = Omit<ProjectReportDetail, 'photoUrls' | 'reportDocUrl'> & {
+    photo_paths: string[] | null;
+    report_doc: string | null;
+  };
+  const rows = (data ?? []) as RawRow[];
 
   const reports: ProjectReportDetail[] = await Promise.all(
-    rows.map(async ({ photo_paths, ...rest }) => {
+    rows.map(async ({ photo_paths, report_doc, ...rest }) => {
       const paths = photo_paths ?? [];
       let photoUrls: string[] = [];
       if (paths.length > 0) {
@@ -46,7 +50,16 @@ export default async function DirectorHomePage() {
           .map((s) => s.signedUrl)
           .filter((u): u is string => Boolean(u));
       }
-      return { ...rest, photoUrls };
+
+      let reportDocUrl: string | null = null;
+      if (report_doc) {
+        const { data: docSigned } = await supabase.storage
+          .from('project-reports')
+          .createSignedUrl(report_doc, SIGNED_URL_TTL);
+        reportDocUrl = docSigned?.signedUrl ?? null;
+      }
+
+      return { ...rest, photoUrls, reportDocUrl };
     })
   );
 

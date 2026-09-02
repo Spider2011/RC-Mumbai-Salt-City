@@ -49,8 +49,12 @@ create table if not exists public.project_reports (
   beneficiaries int  default 0,
   description   text not null,
   photo_paths   text[] default '{}',
+  report_doc    text,                       -- storage path of the uploaded PDF/Word report
   created_at    timestamptz not null default now()
 );
+
+-- If the table already existed before this column was added, run:
+--   alter table public.project_reports add column if not exists report_doc text;
 
 alter table public.project_reports enable row level security;
 

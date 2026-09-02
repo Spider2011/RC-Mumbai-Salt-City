@@ -51,6 +51,11 @@ export async function submitReport(formData: FormData): Promise<ReportResult> {
 
   if (!result.ok) return { ok: false, errors: result.errors };
 
+  const reportDoc = String(formData.get('reportDoc') ?? '').trim();
+  if (!reportDoc) {
+    return { ok: false, errors: { reportDoc: 'Please attach your report document.' } };
+  }
+
   const photoPaths = formData
     .getAll('photoPaths')
     .map((p) => String(p))
@@ -69,6 +74,7 @@ export async function submitReport(formData: FormData): Promise<ReportResult> {
     beneficiaries: v.beneficiaries,
     description: v.description,
     photo_paths: photoPaths,
+    report_doc: reportDoc,
   });
 
   if (error) {

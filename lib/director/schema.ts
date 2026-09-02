@@ -22,6 +22,11 @@ export type Avenue = (typeof AVENUE_OPTIONS)[number];
 
 export const MAX_REPORT_PHOTOS = 8;
 
+/** Report document (PDF / Word) upload limits. */
+export const ALLOWED_DOC_EXTENSIONS = ['pdf', 'doc', 'docx'] as const;
+export const ALLOWED_DOC_ACCEPT = '.pdf,.doc,.docx';
+export const MAX_DOC_BYTES = 15 * 1024 * 1024; // 15MB
+
 /** Portal roles: directors submit reports; core members review all of them. */
 export type MemberRole = 'director' | 'core';
 
@@ -46,6 +51,8 @@ export interface ProjectReportDetail {
   description: string;
   created_at: string;
   photoUrls: string[];
+  /** Signed URL for the attached report document (PDF/Word), if any. */
+  reportDocUrl: string | null;
 }
 
 /** Result shape returned by the submitReport server action. */
