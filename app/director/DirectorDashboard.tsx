@@ -15,17 +15,18 @@ import {
   MAX_REPORT_PHOTOS,
   validateReport,
   type Avenue,
-  type ProjectReportRow,
+  type ProjectReportDetail,
 } from '@/lib/director/schema';
 import type { MemberSession } from '@/lib/director/dal';
 import { logout, submitReport } from './actions';
+import { ReportsReview } from './ReportsReview';
 
 const STORAGE_BUCKET = 'project-reports';
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
 interface Props {
   director: MemberSession;
-  reports: ProjectReportRow[];
+  reports: ProjectReportDetail[];
 }
 
 type FieldErrors = Record<string, string>;
@@ -420,32 +421,13 @@ export function DirectorDashboard({ director, reports }: Props) {
         )}
       </GlassCard>
 
-      {/* Recent reports */}
+      {/* Avenue reports — review own + fellow directors' reports in this avenue */}
       <div>
         <h2 className="font-display mb-4 flex items-center gap-2 text-lg font-light text-[var(--text-primary)]">
           <ClipboardList className="h-5 w-5 text-[var(--accent-gold)]" />
-          Your recent reports
+          {director.avenue ? `Reports in ${director.avenue}` : 'Your reports'}
         </h2>
-        {reports.length === 0 ? (
-          <p className="text-sm text-[var(--text-muted)]">No reports yet — your first one will show here.</p>
-        ) : (
-          <ul className="grid gap-3">
-            {reports.map((r) => (
-              <li
-                key={r.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3"
-              >
-                <div>
-                  <p className="text-[var(--text-primary)]">{r.title}</p>
-                  <p className="text-xs text-[var(--accent-gold)]">{r.avenue}</p>
-                </div>
-                <span className="text-xs text-[var(--text-muted)]">
-                  {r.project_date ?? new Date(r.created_at).toLocaleDateString()}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ReportsReview reports={reports} emptyText="No reports in your avenue yet — your first one will show here." />
       </div>
     </div>
   );

@@ -37,6 +37,39 @@ as $$
   );
 $$;
 
+-- Helper: the current user's avenue (null for core members without one).
+create or replace function public.my_avenue()
+returns text
+language sql
+security definer
+set search_path = public
+as $$
+  select avenue from public.members where id = auth.uid();
+$$;
+
+-- Helper: may the current user read a storage object at `object_name`?
+-- True for their own uploads, any upload by a director in the same avenue,
+-- or anything if they are core.
+create or replace function public.can_read_upload(object_name text)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    (storage.foldername(object_name))[1] = auth.uid()::text
+    or public.is_core()
+    or exists (
+      select 1
+      from public.members me
+      join public.members owner
+        on owner.id::text = (storage.foldername(object_name))[1]
+      where me.id = auth.uid()
+        and me.avenue is not null
+        and me.avenue = owner.avenue
+    );
+$$;
+
 -- ── Project reports (the internal log) ──────────────────────────────────────
 create table if not exists public.project_reports (
   id            uuid primary key default gen_random_uuid(),
@@ -64,11 +97,16 @@ create policy "Members insert own reports"
   on public.project_reports for insert to authenticated
   with check (director_id = auth.uid());
 
--- Directors read their OWN reports; core members read EVERYONE'S.
+-- Directors read reports in their OWN avenue; core members read EVERYONE'S.
 drop policy if exists "Read own or all if core" on public.project_reports;
-create policy "Read own or all if core"
+drop policy if exists "Read own, avenue, or all if core" on public.project_reports;
+create policy "Read own, avenue, or all if core"
   on public.project_reports for select to authenticated
-  using (director_id = auth.uid() or public.is_core());
+  using (
+    director_id = auth.uid()
+    or public.is_core()
+    or (avenue is not null and avenue = public.my_avenue())
+  );
 
 create index if not exists project_reports_created_idx
   on public.project_reports (created_at desc);
@@ -87,14 +125,12 @@ create policy "Members upload own photos"
     and (storage.foldername(name))[1] = auth.uid()::text
   );
 
--- Read own photos; core members can read everyone's (to review reports).
+-- Read own uploads, a same-avenue director's uploads, or everything if core.
 drop policy if exists "Read own photos or all if core" on storage.objects;
-create policy "Read own photos or all if core"
+drop policy if exists "Read uploads by rule" on storage.objects;
+create policy "Read uploads by rule"
   on storage.objects for select to authenticated
-  using (
-    bucket_id = 'project-reports'
-    and ((storage.foldername(name))[1] = auth.uid()::text or public.is_core())
-  );
+  using (bucket_id = 'project-reports' and public.can_read_upload(name));
 
 -- ============================================================================
 -- ADDING A PERSON (repeat per director / core member)
