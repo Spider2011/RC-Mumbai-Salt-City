@@ -22,6 +22,9 @@ export type Avenue = (typeof AVENUE_OPTIONS)[number];
 
 export const MAX_REPORT_PHOTOS = 8;
 
+/** Portal roles: directors submit reports; core members review all of them. */
+export type MemberRole = 'director' | 'core';
+
 /** A director's saved project report, as read back for their dashboard. */
 export interface ProjectReportRow {
   id: string;
@@ -29,6 +32,20 @@ export interface ProjectReportRow {
   avenue: string;
   project_date: string | null;
   created_at: string;
+}
+
+/** A full report row plus resolved (signed) photo URLs — for the core review view. */
+export interface ProjectReportDetail {
+  id: string;
+  director_name: string;
+  avenue: string;
+  title: string;
+  project_date: string | null;
+  location: string | null;
+  beneficiaries: number | null;
+  description: string;
+  created_at: string;
+  photoUrls: string[];
 }
 
 /** Result shape returned by the submitReport server action. */

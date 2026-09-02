@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { getDirector } from '@/lib/director/dal';
+import { getMember } from '@/lib/director/dal';
 import { validateReport, MAX_REPORT_PHOTOS, type ReportResult } from '@/lib/director/schema';
 
 export interface LoginState {
@@ -38,7 +38,7 @@ export async function logout(): Promise<void> {
  * Re-validates on the server (the real gate) before inserting.
  */
 export async function submitReport(formData: FormData): Promise<ReportResult> {
-  const director = await getDirector(); // redirects if the session is gone
+  const director = await getMember(); // redirects if the session is gone
 
   const result = validateReport({
     title: String(formData.get('title') ?? ''),

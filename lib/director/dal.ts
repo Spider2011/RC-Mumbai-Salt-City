@@ -2,23 +2,26 @@ import 'server-only';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import type { MemberRole } from '@/lib/director/schema';
 
-export interface DirectorSession {
+export interface MemberSession {
   userId: string;
   email: string;
   fullName: string;
   avenue: string;
+  role: MemberRole;
 }
 
 /**
  * The portal's Data Access Layer. Verifies the Supabase auth session and loads
- * the director's profile (name + avenue). Redirects to the login page if there
- * is no valid session, so every caller is guaranteed an authenticated director.
+ * the member's profile (name, avenue, role). Redirects to the login page if
+ * there is no valid session, so every caller is guaranteed an authenticated
+ * member.
  *
  * `cache` memoizes the result within a single render/request pass so the auth
  * check and profile lookup run at most once per request.
  */
-export const getDirector = cache(async (): Promise<DirectorSession> => {
+export const getMember = cache(async (): Promise<MemberSession> => {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -27,15 +30,16 @@ export const getDirector = cache(async (): Promise<DirectorSession> => {
   if (!user) redirect('/director/login');
 
   const { data: profile } = await supabase
-    .from('directors')
-    .select('full_name, avenue')
+    .from('members')
+    .select('full_name, avenue, role')
     .eq('id', user.id)
     .single();
 
   return {
     userId: user.id,
     email: user.email ?? '',
-    fullName: profile?.full_name ?? user.email ?? 'Director',
+    fullName: profile?.full_name ?? user.email ?? 'Member',
     avenue: profile?.avenue ?? '',
+    role: profile?.role === 'core' ? 'core' : 'director',
   };
 });

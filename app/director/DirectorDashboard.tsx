@@ -14,14 +14,14 @@ import {
   type Avenue,
   type ProjectReportRow,
 } from '@/lib/director/schema';
-import type { DirectorSession } from '@/lib/director/dal';
+import type { MemberSession } from '@/lib/director/dal';
 import { logout, submitReport } from './actions';
 
 const STORAGE_BUCKET = 'project-reports';
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
 interface Props {
-  director: DirectorSession;
+  director: MemberSession;
   reports: ProjectReportRow[];
 }
 
