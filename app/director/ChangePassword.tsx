@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { KeyRound, CheckCircle2, X } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { TextField } from '@/components/ui/FormField';
+import { Portal } from '@/components/ui/Portal';
 import { changePassword, type PasswordState } from './actions';
 
 export function ChangePassword() {
@@ -37,6 +38,7 @@ export function ChangePassword() {
         Password
       </button>
 
+      <Portal>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -119,6 +121,7 @@ export function ChangePassword() {
           </motion.div>
         )}
       </AnimatePresence>
+      </Portal>
     </>
   );
 }

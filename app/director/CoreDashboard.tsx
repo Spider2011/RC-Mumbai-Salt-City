@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Users, Plus, X } from 'lucide-react';
 import type { ProjectReportDetail } from '@/lib/director/schema';
 import type { MemberSession } from '@/lib/director/dal';
+import { Portal } from '@/components/ui/Portal';
 import { logout } from './actions';
 import { ReportsReview } from './ReportsReview';
 import { ChangePassword } from './ChangePassword';
@@ -68,6 +69,7 @@ export function CoreDashboard({ member, reports }: Props) {
       <ReportsReview reports={reports} showAvenueFilter />
 
       {/* Submit-a-report modal */}
+      <Portal>
       <AnimatePresence>
         {reportOpen && (
           <motion.div
@@ -101,6 +103,7 @@ export function CoreDashboard({ member, reports }: Props) {
           </motion.div>
         )}
       </AnimatePresence>
+      </Portal>
     </div>
   );
 }

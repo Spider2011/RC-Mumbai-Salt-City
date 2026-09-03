@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, CalendarDays, ImageOff, X, ArrowRight, FileText } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { SelectField } from '@/components/ui/FormField';
+import { Portal } from '@/components/ui/Portal';
 import { AVENUE_OPTIONS, type ProjectReportDetail } from '@/lib/director/schema';
 
 interface Props {
@@ -115,6 +116,7 @@ export function ReportsReview({ reports, showAvenueFilter = false, emptyText = '
         </>
       )}
 
+      <Portal>
       <AnimatePresence>
         {selected && (
           <motion.div
@@ -212,6 +214,7 @@ export function ReportsReview({ reports, showAvenueFilter = false, emptyText = '
           </motion.div>
         )}
       </AnimatePresence>
+      </Portal>
     </div>
   );
 }
