@@ -20,6 +20,7 @@ import {
 import type { MemberSession } from '@/lib/director/dal';
 import { logout, submitReport } from './actions';
 import { ReportsReview } from './ReportsReview';
+import { ChangePassword } from './ChangePassword';
 
 const STORAGE_BUCKET = 'project-reports';
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
@@ -429,6 +430,8 @@ export function DirectorDashboard({ director, reports }: Props) {
         </h2>
         <ReportsReview reports={reports} emptyText="No reports in your avenue yet — your first one will show here." />
       </div>
+
+      <ChangePassword />
     </div>
   );
 }

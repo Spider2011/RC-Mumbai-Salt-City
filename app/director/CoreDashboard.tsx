@@ -5,6 +5,7 @@ import type { ProjectReportDetail } from '@/lib/director/schema';
 import type { MemberSession } from '@/lib/director/dal';
 import { logout } from './actions';
 import { ReportsReview } from './ReportsReview';
+import { ChangePassword } from './ChangePassword';
 
 interface Props {
   member: MemberSession;
@@ -37,6 +38,8 @@ export function CoreDashboard({ member, reports }: Props) {
       </div>
 
       <ReportsReview reports={reports} showAvenueFilter />
+
+      <ChangePassword />
     </div>
   );
 }

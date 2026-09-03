@@ -32,6 +32,34 @@ export async function logout(): Promise<void> {
   redirect('/director/login');
 }
 
+export interface PasswordState {
+  ok?: boolean;
+  error?: string;
+}
+
+/** Let the signed-in member set a new password for their own account. */
+export async function changePassword(
+  _prev: PasswordState,
+  formData: FormData
+): Promise<PasswordState> {
+  const password = String(formData.get('password') ?? '');
+  const confirm = String(formData.get('confirm') ?? '');
+
+  if (password.length < 8) return { error: 'Password must be at least 8 characters.' };
+  if (password !== confirm) return { error: 'The two passwords do not match.' };
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'Your session has expired. Please sign in again.' };
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) return { error: error.message || 'Could not update your password. Please try again.' };
+
+  return { ok: true };
+}
+
 /**
  * Save a project report for the logged-in director. Photos are uploaded to
  * Storage from the browser first; their paths arrive here as `photoPaths`.
