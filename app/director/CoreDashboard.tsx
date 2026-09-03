@@ -26,20 +26,21 @@ export function CoreDashboard({ member, reports }: Props) {
             <Users className="h-3.5 w-3.5" /> Viewing all avenue reports
           </p>
         </div>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-white/30 hover:text-[var(--text-primary)]"
-          >
-            <LogOut className="h-4 w-4" />
-            Sign out
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <ChangePassword />
+          <form action={logout}>
+            <button
+              type="submit"
+              className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-white/30 hover:text-[var(--text-primary)]"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       <ReportsReview reports={reports} showAvenueFilter />
-
-      <ChangePassword />
     </div>
   );
 }

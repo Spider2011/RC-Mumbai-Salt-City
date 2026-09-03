@@ -201,15 +201,18 @@ export function DirectorDashboard({ director, reports }: Props) {
             <p className="text-sm text-[var(--accent-gold)]">{director.avenue}</p>
           )}
         </div>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-white/30 hover:text-[var(--text-primary)]"
-          >
-            <LogOut className="h-4 w-4" />
-            Sign out
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <ChangePassword />
+          <form action={logout}>
+            <button
+              type="submit"
+              className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-white/30 hover:text-[var(--text-primary)]"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Report form / success */}
@@ -430,8 +433,6 @@ export function DirectorDashboard({ director, reports }: Props) {
         </h2>
         <ReportsReview reports={reports} emptyText="No reports in your avenue yet — your first one will show here." />
       </div>
-
-      <ChangePassword />
     </div>
   );
 }
