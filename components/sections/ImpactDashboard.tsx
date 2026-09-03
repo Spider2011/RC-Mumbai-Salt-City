@@ -36,7 +36,7 @@ function CountUp({ value, duration = 1.4 }: { value: number; duration?: number }
   return <span ref={ref}>{display}</span>;
 }
 
-export function ImpactDashboard() {
+export function ImpactDashboard({ embedded = false }: { embedded?: boolean }) {
   // "Projects done" — completed events from the events data.
   const projectsDone = useMemo(
     () => EVENTS.filter((e) => getEventStatus(e) === 'past').length,
@@ -86,12 +86,17 @@ export function ImpactDashboard() {
   ];
 
   return (
-    <section className="section mx-auto max-w-7xl px-6" aria-labelledby="impact-heading">
-      <div className="mb-10 text-center">
+    <section
+      className={embedded ? '' : 'section mx-auto max-w-7xl px-6'}
+      aria-labelledby="impact-heading"
+    >
+      <div className={embedded ? 'mb-6' : 'mb-10 text-center'}>
         <Eyebrow>Our Impact</Eyebrow>
         <h2
           id="impact-heading"
-          className="font-display mt-4 text-[clamp(1.8rem,3.5vw,2.8rem)] font-light leading-[1.15] text-[var(--text-primary)]"
+          className={`font-display mt-4 font-light leading-[1.15] text-[var(--text-primary)] ${
+            embedded ? 'text-2xl' : 'text-[clamp(1.8rem,3.5vw,2.8rem)]'
+          }`}
         >
           The road to <span className="text-gradient-gold">100 projects.</span>
         </h2>

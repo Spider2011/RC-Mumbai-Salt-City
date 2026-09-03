@@ -2,6 +2,7 @@
 
 import { ClipboardList, LogOut } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { ImpactDashboard } from '@/components/sections/ImpactDashboard';
 import type { ProjectReportDetail } from '@/lib/director/schema';
 import type { MemberSession } from '@/lib/director/dal';
 import { logout } from './actions';
@@ -39,6 +40,11 @@ export function DirectorDashboard({ director, reports }: Props) {
           </form>
         </div>
       </div>
+
+      {/* Impact dashboard — progress to 100 projects */}
+      <GlassCard className="p-6 md:p-8" tilt={false}>
+        <ImpactDashboard embedded />
+      </GlassCard>
 
       {/* Report form */}
       <GlassCard className="p-8 md:p-10" tilt={false} variant="heavy">

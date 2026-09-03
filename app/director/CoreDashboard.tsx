@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Users, Plus, X } from 'lucide-react';
 import type { ProjectReportDetail } from '@/lib/director/schema';
 import type { MemberSession } from '@/lib/director/dal';
+import { GlassCard } from '@/components/ui/GlassCard';
+import { ImpactDashboard } from '@/components/sections/ImpactDashboard';
 import { Portal } from '@/components/ui/Portal';
 import { logout } from './actions';
 import { ReportsReview } from './ReportsReview';
@@ -65,6 +67,11 @@ export function CoreDashboard({ member, reports }: Props) {
           </form>
         </div>
       </div>
+
+      {/* Impact dashboard — progress to 100 projects */}
+      <GlassCard className="p-6 md:p-8" tilt={false}>
+        <ImpactDashboard embedded />
+      </GlassCard>
 
       <ReportsReview reports={reports} showAvenueFilter />
 
