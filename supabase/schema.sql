@@ -111,6 +111,19 @@ create policy "Read own, avenue, or all if core"
 create index if not exists project_reports_created_idx
   on public.project_reports (created_at desc);
 
+-- Public count of reported projects (number only — no data) for the homepage
+-- impact dashboard. SECURITY DEFINER so it bypasses RLS to count everything.
+create or replace function public.reported_count()
+returns integer
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select count(*)::int from public.project_reports;
+$$;
+grant execute on function public.reported_count() to anon, authenticated;
+
 -- ── Storage bucket for project photos ───────────────────────────────────────
 insert into storage.buckets (id, name, public)
 values ('project-reports', 'project-reports', false)

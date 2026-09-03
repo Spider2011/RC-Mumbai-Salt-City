@@ -1,6 +1,7 @@
 import { Hero } from '@/components/sections/Hero';
 import { MissionSection } from '@/components/sections/MissionSection';
 import { YearThemeSection } from '@/components/sections/YearThemeSection';
+import { ImpactDashboard } from '@/components/sections/ImpactDashboard';
 import { GallerySection } from '@/components/sections/GallerySection';
 import { CTASection } from '@/components/sections/CTASection';
 import { Footer } from '@/components/sections/Footer';
@@ -13,6 +14,7 @@ export default function Home() {
       <MissionSection />
       <SanskritMarquee />
       <YearThemeSection />
+      <ImpactDashboard />
       <GallerySection />
       <CTASection />
       <Footer />
