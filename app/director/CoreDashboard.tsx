@@ -80,6 +80,7 @@ export function CoreDashboard({ member, reports }: Props) {
       <AnimatePresence>
         {reportOpen && (
           <motion.div
+            data-lenis-prevent
             className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm sm:p-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
