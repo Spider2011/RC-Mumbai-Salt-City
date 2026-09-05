@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { ProjectReportDetail } from '@/lib/director/schema';
 import { DirectorDashboard } from './DirectorDashboard';
 import { CoreDashboard } from './CoreDashboard';
+import { IdleLogout } from './IdleLogout';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,8 +55,14 @@ export default async function DirectorHomePage() {
     })
   );
 
-  if (member.role === 'core') {
-    return <CoreDashboard member={member} reports={reports} />;
-  }
-  return <DirectorDashboard director={member} reports={reports} />;
+  return (
+    <>
+      <IdleLogout />
+      {member.role === 'core' ? (
+        <CoreDashboard member={member} reports={reports} />
+      ) : (
+        <DirectorDashboard director={member} reports={reports} />
+      )}
+    </>
+  );
 }
