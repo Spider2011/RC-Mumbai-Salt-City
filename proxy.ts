@@ -31,7 +31,9 @@ export async function proxy(request: NextRequest) {
   }
 
   let response = NextResponse.next({ request });
+  let refreshed = false;
   const { url, anonKey } = getSupabaseConfig();
+  const secure = request.nextUrl.protocol === 'https:';
 
   const supabase = createServerClient(url, anonKey, {
     cookies: {
@@ -39,6 +41,7 @@ export async function proxy(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
+        refreshed = true;
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
         cookiesToSet.forEach(({ name, value, options }) => {
@@ -61,6 +64,17 @@ export async function proxy(request: NextRequest) {
 
   if (!user) {
     return noStore(NextResponse.redirect(new URL('/director/login', request.url)));
+  }
+
+  // If the token didn't refresh this request, the existing auth cookies may be
+  // old long-lived ones (set before this change). Re-emit them WITHOUT expiry so
+  // they become session cookies — this auto-fixes already-signed-in devices.
+  if (!refreshed) {
+    for (const c of request.cookies.getAll()) {
+      if (c.name.startsWith('sb-')) {
+        response.cookies.set(c.name, c.value, { path: '/', sameSite: 'lax', secure });
+      }
+    }
   }
 
   return noStore(response);
