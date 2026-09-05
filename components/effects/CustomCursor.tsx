@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 /**
  * Spring-following custom cursor: a gold reticle ring + glow halo + center dot.
  * Uses a dual dark/gold outline (not mix-blend) so it stays visible on any
- * background, and sits at z-[9999] so it renders above overlays like the
+ * background, and sits at z-[100000] so it renders above overlays like the
  * gallery lightbox. On interactive hover the ring grows and the dot hides.
  * Disabled on touch devices and when reduced motion is requested.
  */
@@ -56,7 +56,7 @@ export function CustomCursor() {
       {/* Soft glow halo — presence on dark backgrounds */}
       <motion.div
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full"
+        className="pointer-events-none fixed left-0 top-0 z-[100000] rounded-full"
         style={{
           x: outerX,
           y: outerY,
@@ -75,7 +75,7 @@ export function CustomCursor() {
       {/* Gold reticle ring — dual dark/gold outline stays visible on any bg */}
       <motion.div
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full border-[1.5px] border-[var(--accent-gold)]"
+        className="pointer-events-none fixed left-0 top-0 z-[100000] rounded-full border-[1.5px] border-[var(--accent-gold)]"
         style={{
           x: outerX,
           y: outerY,
@@ -94,7 +94,7 @@ export function CustomCursor() {
       {/* Snappy center dot — dark ring keeps it visible on light photos */}
       <motion.div
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-[var(--accent-gold)]"
+        className="pointer-events-none fixed left-0 top-0 z-[100000] h-1.5 w-1.5 rounded-full bg-[var(--accent-gold)]"
         style={{
           x: innerX,
           y: innerY,

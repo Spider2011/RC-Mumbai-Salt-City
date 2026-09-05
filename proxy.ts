@@ -10,17 +10,24 @@ import { getSupabaseConfig, isSupabaseConfigured } from '@/lib/supabase/config';
  *   1. Refreshes the Supabase auth session cookie on each request.
  *   2. Redirects unauthenticated visitors to the (unlinked) login page.
  *
- * The login page itself stays public so directors can reach it.
+ * Every response is marked `no-store` so the CDN never caches an authenticated
+ * page or, critically, its `Set-Cookie` header — otherwise one signed-in user's
+ * session could be served to every other visitor.
  */
+function noStore(res: NextResponse): NextResponse {
+  res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+  return res;
+}
+
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  if (path === '/director/login') return NextResponse.next();
+  if (path === '/director/login') return noStore(NextResponse.next());
 
   // Portal not wired up yet — send everything to the login page, which shows
   // a setup notice instead of crashing.
   if (!isSupabaseConfigured()) {
-    return NextResponse.redirect(new URL('/director/login', request.url));
+    return noStore(NextResponse.redirect(new URL('/director/login', request.url)));
   }
 
   let response = NextResponse.next({ request });
@@ -46,10 +53,10 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.redirect(new URL('/director/login', request.url));
+    return noStore(NextResponse.redirect(new URL('/director/login', request.url)));
   }
 
-  return response;
+  return noStore(response);
 }
 
 export const config = {
