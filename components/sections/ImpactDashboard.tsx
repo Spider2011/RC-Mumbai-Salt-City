@@ -12,23 +12,31 @@ import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 const GOAL = 100;
 
-/** Animated integer that counts up once it scrolls into view. */
+/**
+ * Animated integer that counts up when it scrolls into view, and animates
+ * smoothly from its current value to the new one on live updates (not from 0).
+ */
 function CountUp({ value, duration = 1.4 }: { value: number; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-10%' });
   const reduce = useReducedMotion();
   const [display, setDisplay] = useState(0);
+  const displayRef = useRef(0);
 
   useEffect(() => {
     if (!inView) return;
     if (reduce) {
+      displayRef.current = value;
       setDisplay(value);
       return;
     }
-    const controls = animate(0, value, {
+    const controls = animate(displayRef.current, value, {
       duration,
       ease: 'easeOut',
-      onUpdate: (v) => setDisplay(Math.round(v)),
+      onUpdate: (v) => {
+        displayRef.current = v;
+        setDisplay(Math.round(v));
+      },
     });
     return () => controls.stop();
   }, [inView, value, duration, reduce]);
@@ -43,22 +51,42 @@ export function ImpactDashboard({ embedded = false }: { embedded?: boolean }) {
     []
   );
 
-  // "Projects reported" — count from the director portal (public count only).
+  // "Projects reported" — live count from the director portal (count only).
+  // Refreshes on an interval, on tab focus, and via Supabase Realtime so the
+  // number stays current without a page reload.
   const [reported, setReported] = useState(0);
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
     let active = true;
-    (async () => {
+    const supabase = createSupabaseBrowserClient();
+
+    async function refresh() {
       try {
-        const supabase = createSupabaseBrowserClient();
         const { data, error } = await supabase.rpc('reported_count');
         if (active && !error && typeof data === 'number') setReported(data);
       } catch {
-        /* leave at 0 if unavailable */
+        /* leave the last known value if a refresh fails */
       }
-    })();
+    }
+
+    refresh();
+    const interval = setInterval(refresh, 15_000);
+    const onVisible = () => document.visibilityState === 'visible' && refresh();
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', refresh);
+
+    // Instant updates when a report is added/removed (respects RLS per viewer).
+    const channel = supabase
+      .channel('impact-reported-count')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_reports' }, refresh)
+      .subscribe();
+
     return () => {
       active = false;
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', refresh);
+      supabase.removeChannel(channel);
     };
   }, []);
 
