@@ -19,9 +19,16 @@ export async function createSupabaseServerClient() {
       },
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Session cookie (no expiry) so members are signed out on browser
+            // close; keep expiry only for deletions (empty value → sign-out).
+            const opts = { ...options };
+            if (value) {
+              delete opts.maxAge;
+              delete opts.expires;
+            }
+            cookieStore.set(name, value, opts);
+          });
         } catch {
           // Called from a Server Component, where cookies are read-only.
           // The proxy (middleware) refreshes the session cookie instead.

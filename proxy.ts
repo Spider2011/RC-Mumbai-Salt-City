@@ -41,9 +41,16 @@ export async function proxy(request: NextRequest) {
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
-        );
+        cookiesToSet.forEach(({ name, value, options }) => {
+          // Session cookie (no expiry) so the login ends on browser close;
+          // keep expiry only for deletions.
+          const opts = { ...options };
+          if (value) {
+            delete opts.maxAge;
+            delete opts.expires;
+          }
+          response.cookies.set(name, value, opts);
+        });
       },
     },
   });
