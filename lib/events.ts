@@ -110,6 +110,7 @@ export const EVENTS: ClubEvent[] = [
     start: '2026-09-27T18:00:00+05:30',
     end: '2026-09-27T23:00:00+05:30',
     avenue: 'Club Service',
+    image: '/images/events/garba-gala/poster.jpg',
     description:
       'A night of garba, music, and festivity — dress up, twirl, and celebrate the season with the club.',
     longDescription: [
