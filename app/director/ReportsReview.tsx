@@ -1,18 +1,22 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, CalendarDays, ImageOff, X, ArrowRight, FileText } from 'lucide-react';
+import { MapPin, CalendarDays, ImageOff, X, ArrowRight, FileText, Trash2 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { SelectField } from '@/components/ui/FormField';
 import { Portal } from '@/components/ui/Portal';
 import { AVENUE_OPTIONS, type ProjectReportDetail } from '@/lib/director/schema';
+import { deleteReport } from './actions';
 
 interface Props {
   reports: ProjectReportDetail[];
   /** Show the avenue dropdown filter (core view spans all avenues). */
   showAvenueFilter?: boolean;
   emptyText?: string;
+  /** Allow deleting reports (President / Secretary only). */
+  canDelete?: boolean;
 }
 
 const ALL = 'All avenues';
@@ -21,9 +25,33 @@ function formatDate(r: ProjectReportDetail): string {
   return r.project_date ?? new Date(r.created_at).toLocaleDateString();
 }
 
-export function ReportsReview({ reports, showAvenueFilter = false, emptyText = 'No reports here yet.' }: Props) {
+export function ReportsReview({
+  reports,
+  showAvenueFilter = false,
+  emptyText = 'No reports here yet.',
+  canDelete = false,
+}: Props) {
+  const router = useRouter();
   const [avenue, setAvenue] = useState<string>(ALL);
   const [selected, setSelected] = useState<ProjectReportDetail | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function handleDelete() {
+    if (!selected) return;
+    setDeleting(true);
+    setDeleteError(null);
+    const res = await deleteReport(selected.id);
+    setDeleting(false);
+    if (res.ok) {
+      setSelected(null);
+      setConfirming(false);
+      router.refresh();
+    } else {
+      setDeleteError(res.error ?? 'Could not delete the report.');
+    }
+  }
 
   const filtered = useMemo(
     () => (!showAvenueFilter || avenue === ALL ? reports : reports.filter((r) => r.avenue === avenue)),
@@ -32,6 +60,8 @@ export function ReportsReview({ reports, showAvenueFilter = false, emptyText = '
 
   // Close the modal on Escape, and lock background scroll while it's open.
   useEffect(() => {
+    setConfirming(false);
+    setDeleteError(null);
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setSelected(null);
     window.addEventListener('keydown', onKey);
@@ -210,6 +240,48 @@ export function ReportsReview({ reports, showAvenueFilter = false, emptyText = '
                 <p className="mt-6 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
                   <ImageOff className="h-3.5 w-3.5" /> No photos attached
                 </p>
+              )}
+
+              {canDelete && (
+                <div className="mt-6 border-t border-white/10 pt-5">
+                  {confirming ? (
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-sm text-[var(--text-secondary)]">
+                        Delete this report permanently?
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="rounded-full border border-[var(--accent-sunrise-from)]/60 bg-[var(--accent-sunrise-from)]/10 px-4 py-2 text-sm text-[var(--accent-sunrise-from)] transition-colors hover:bg-[var(--accent-sunrise-from)]/20 disabled:opacity-50"
+                      >
+                        {deleting ? 'Deleting…' : 'Yes, delete'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirming(false)}
+                        disabled={deleting}
+                        className="rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-white/30 hover:text-[var(--text-primary)]"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setConfirming(true)}
+                      className="flex items-center gap-2 text-sm text-[var(--accent-sunrise-from)] transition-opacity hover:opacity-80"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete report
+                    </button>
+                  )}
+                  {deleteError && (
+                    <p className="mt-2 text-xs text-[var(--accent-sunrise-from)]" role="alert">
+                      {deleteError}
+                    </p>
+                  )}
+                </div>
               )}
             </motion.div>
           </motion.div>

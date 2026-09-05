@@ -32,6 +32,44 @@ export async function logout(): Promise<void> {
   redirect('/director/login');
 }
 
+export interface DeleteResult {
+  ok: boolean;
+  error?: string;
+}
+
+/**
+ * Delete a project report. Restricted to admins (President / Secretary) — the
+ * check here mirrors the database RLS delete policy. Also removes the report's
+ * photos and document from Storage.
+ */
+export async function deleteReport(reportId: string): Promise<DeleteResult> {
+  const member = await getMember();
+  if (!member.isAdmin) return { ok: false, error: 'You are not allowed to delete reports.' };
+  if (!reportId) return { ok: false, error: 'Missing report id.' };
+
+  const supabase = await createSupabaseServerClient();
+
+  const { data: row } = await supabase
+    .from('project_reports')
+    .select('photo_paths, report_doc')
+    .eq('id', reportId)
+    .single();
+
+  const paths = [
+    ...((row?.photo_paths as string[] | null) ?? []),
+    ...(row?.report_doc ? [row.report_doc as string] : []),
+  ].filter(Boolean);
+  if (paths.length > 0) {
+    await supabase.storage.from('project-reports').remove(paths);
+  }
+
+  const { error } = await supabase.from('project_reports').delete().eq('id', reportId);
+  if (error) return { ok: false, error: 'Could not delete the report. Please try again.' };
+
+  revalidatePath('/director');
+  return { ok: true };
+}
+
 export interface PasswordState {
   ok?: boolean;
   error?: string;

@@ -73,7 +73,7 @@ export function CoreDashboard({ member, reports }: Props) {
         <ImpactDashboard embedded />
       </GlassCard>
 
-      <ReportsReview reports={reports} showAvenueFilter />
+      <ReportsReview reports={reports} showAvenueFilter canDelete={member.isAdmin} />
 
       {/* Submit-a-report modal */}
       <Portal>

@@ -13,8 +13,12 @@ create table if not exists public.members (
   full_name  text not null,
   role       text not null default 'director' check (role in ('director', 'core')),
   avenue     text,                       -- required for directors, optional for core
+  is_admin   boolean not null default false,  -- President / Secretary: may delete reports
   created_at timestamptz not null default now()
 );
+
+-- If the table already existed before this column was added, run:
+--   alter table public.members add column if not exists is_admin boolean not null default false;
 
 alter table public.members enable row level security;
 
@@ -34,6 +38,18 @@ as $$
   select exists (
     select 1 from public.members
     where id = auth.uid() and role = 'core'
+  );
+$$;
+
+-- Helper: is the current user an admin (President / Secretary)?
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.members where id = auth.uid() and is_admin
   );
 $$;
 
@@ -108,6 +124,12 @@ create policy "Read own, avenue, or all if core"
     or (avenue is not null and avenue = public.my_avenue())
   );
 
+-- Admins (President / Secretary) may delete any report.
+drop policy if exists "Admins delete reports" on public.project_reports;
+create policy "Admins delete reports"
+  on public.project_reports for delete to authenticated
+  using (public.is_admin());
+
 create index if not exists project_reports_created_idx
   on public.project_reports (created_at desc);
 
@@ -144,6 +166,12 @@ drop policy if exists "Read uploads by rule" on storage.objects;
 create policy "Read uploads by rule"
   on storage.objects for select to authenticated
   using (bucket_id = 'project-reports' and public.can_read_upload(name));
+
+-- Admins may delete report uploads (used when a report is deleted).
+drop policy if exists "Admins delete uploads" on storage.objects;
+create policy "Admins delete uploads"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'project-reports' and public.is_admin());
 
 -- ============================================================================
 -- ADDING A PERSON (repeat per director / core member)

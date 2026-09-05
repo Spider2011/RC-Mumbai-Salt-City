@@ -57,7 +57,11 @@ export function DirectorDashboard({ director, reports }: Props) {
           <ClipboardList className="h-5 w-5 text-[var(--accent-gold)]" />
           {director.avenue ? `Reports in ${director.avenue}` : 'Your reports'}
         </h2>
-        <ReportsReview reports={reports} emptyText="No reports in your avenue yet — your first one will show here." />
+        <ReportsReview
+          reports={reports}
+          emptyText="No reports in your avenue yet — your first one will show here."
+          canDelete={director.isAdmin}
+        />
       </div>
     </div>
   );

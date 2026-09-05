@@ -10,6 +10,8 @@ export interface MemberSession {
   fullName: string;
   avenue: string;
   role: MemberRole;
+  /** President / Secretary — may delete reports. */
+  isAdmin: boolean;
 }
 
 /**
@@ -31,7 +33,7 @@ export const getMember = cache(async (): Promise<MemberSession> => {
 
   const { data: profile } = await supabase
     .from('members')
-    .select('full_name, avenue, role')
+    .select('full_name, avenue, role, is_admin')
     .eq('id', user.id)
     .single();
 
@@ -41,5 +43,6 @@ export const getMember = cache(async (): Promise<MemberSession> => {
     fullName: profile?.full_name ?? user.email ?? 'Member',
     avenue: profile?.avenue ?? '',
     role: profile?.role === 'core' ? 'core' : 'director',
+    isAdmin: profile?.is_admin === true,
   };
 });
