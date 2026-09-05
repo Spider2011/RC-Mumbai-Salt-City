@@ -33,12 +33,13 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
     name: '',
     email: '',
     phone: '',
-    guests: '1',
+    guests: '',
   });
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [incomplete, setIncomplete] = useState(false);
 
   const [image, setImage] = useState<CompressedImage | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -48,6 +49,7 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
+    if (incomplete) setIncomplete(false);
   }
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -76,11 +78,16 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
   function validate(): boolean {
     const next: Errors = {};
     if (!form.name.trim()) next.name = 'Please tell us your name.';
-    if (!EMAIL_RE.test(form.email)) next.email = 'Enter a valid email address.';
-    if (!PHONE_RE.test(form.phone)) next.phone = 'Enter a valid phone number.';
-    const guests = Number(form.guests);
-    if (!Number.isInteger(guests) || guests < 1 || guests > 20)
-      next.guests = 'Enter a number between 1 and 20.';
+    if (!form.email.trim()) next.email = 'Please enter your email.';
+    else if (!EMAIL_RE.test(form.email)) next.email = 'Enter a valid email address.';
+    if (!form.phone.trim()) next.phone = 'Please enter your phone number.';
+    else if (!PHONE_RE.test(form.phone)) next.phone = 'Enter a valid phone number.';
+    if (!form.guests.trim()) next.guests = 'Please enter the number of attendees.';
+    else {
+      const guests = Number(form.guests);
+      if (!Number.isInteger(guests) || guests < 1 || guests > 20)
+        next.guests = 'Enter a number between 1 and 20.';
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -91,7 +98,11 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
     if (collectImage && !image) {
       setImageError('Please upload your payment proof to register.');
     }
-    if (!validFields || (collectImage && !image)) return;
+    if (!validFields || (collectImage && !image)) {
+      setIncomplete(true);
+      return;
+    }
+    setIncomplete(false);
     setSubmitting(true);
     setFailed(false);
     try {
@@ -247,6 +258,11 @@ export function EventRegisterForm({ eventTitle, collectImage = false }: EventReg
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 )}
               </GlassButton>
+              {incomplete && (
+                <p className="mt-3 text-sm text-[var(--accent-sunrise-from)]" role="alert">
+                  Please fill in all the details before registering.
+                </p>
+              )}
               {failed && (
                 <p className="mt-3 text-sm text-[var(--accent-sunrise-from)]" role="alert">
                   Something went wrong with your registration. Please try again.
