@@ -8,10 +8,10 @@ interface SponsorsGridProps {
 }
 
 const ROW_CONFIG = [
-  { cardClass: 'w-[240px] h-[150px]' },
-  { cardClass: 'w-[180px] h-[112px]' },
-  { cardClass: 'w-[140px] h-[90px]' },
-  { cardClass: 'w-[160px] h-[100px]' },
+  { cardClass: 'w-[200px] h-[125px] sm:w-[240px] sm:h-[150px]', gap: 'gap-4 sm:gap-6' },
+  { cardClass: 'w-[140px] h-[88px] sm:w-[180px] sm:h-[112px]', gap: 'gap-4 sm:gap-6' },
+  { cardClass: 'w-[95px] h-[62px] sm:w-[140px] sm:h-[90px]',   gap: 'gap-2 sm:gap-6' },
+  { cardClass: 'w-[130px] h-[82px] sm:w-[160px] sm:h-[100px]', gap: 'gap-4 sm:gap-6' },
 ];
 
 export function SponsorsGrid({ rows }: SponsorsGridProps) {
@@ -33,7 +33,7 @@ export function SponsorsGrid({ rows }: SponsorsGridProps) {
           const cfg = ROW_CONFIG[rowIdx] ?? ROW_CONFIG[ROW_CONFIG.length - 1];
           return (
             <ScrollReveal key={rowIdx}>
-              <div className="flex flex-wrap items-end justify-center gap-6">
+              <div className={`flex flex-nowrap items-end justify-center ${cfg.gap}`}>
                 {row.sponsors.map((sponsor, sIdx) => (
                   <div key={sIdx} className="group flex flex-col items-center gap-2">
                     <div
@@ -43,7 +43,7 @@ export function SponsorsGrid({ rows }: SponsorsGridProps) {
                         src={sponsor.logo}
                         alt={sponsor.tier}
                         fill
-                        className="object-contain p-4"
+                        className="object-contain p-2 sm:p-4"
                         sizes="260px"
                       />
                     </div>
