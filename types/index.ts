@@ -55,6 +55,17 @@ export interface Event {
   galleryVariant?: 'scroll' | 'circular';
   /** Show an optional photo-upload field on this event's registration form. */
   collectImage?: boolean;
+  /** Sponsor rows displayed in a pyramid above the registration form. */
+  sponsorRows?: EventSponsorRow[];
+}
+
+export interface EventSponsor {
+  tier: string;
+  logo: string;
+}
+
+export interface EventSponsorRow {
+  sponsors: EventSponsor[];
 }
 
 export interface Project {

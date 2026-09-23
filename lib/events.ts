@@ -126,6 +126,31 @@ export const EVENTS: ClubEvent[] = [
     location: 'Grand Celebration Banquet, Mulund',
     time: '5:30 PM onwards',
     collectImage: true,
+    sponsorRows: [
+      {
+        sponsors: [
+          { tier: 'Title Partner', logo: '/images/Garba%20Gala/Title%20Partner.jpg' },
+        ],
+      },
+      {
+        sponsors: [
+          { tier: 'Powered By', logo: '/images/Garba%20Gala/Powered%20By.jpg' },
+          { tier: 'Strategic Event Partner', logo: '/images/Garba%20Gala/Strategic%20Event%20Partner.jpg' },
+        ],
+      },
+      {
+        sponsors: [
+          { tier: 'Gifting Partner', logo: '/images/Garba%20Gala/Gifting%20Partner.jpg' },
+          { tier: 'Gifting Partner', logo: '/images/Garba%20Gala/Gifting%20Partner-1.jpg' },
+          { tier: 'Gifting Partner', logo: '/images/Garba%20Gala/Gifting%20Partner-2.jpg' },
+        ],
+      },
+      {
+        sponsors: [
+          { tier: 'Media Partner', logo: '/images/Garba%20Gala/Madia%20Partner.jpg' },
+        ],
+      },
+    ],
   },
 ];
 

@@ -6,6 +6,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { ScrollReveal } from '@/components/effects/ScrollReveal';
 import { EventGallery } from '@/components/sections/EventGallery';
 import { EventRegisterForm } from '@/components/sections/EventRegisterForm';
+import { SponsorsGrid } from '@/components/sections/SponsorsGrid';
 import CircularGallery from '@/components/effects/CircularGallery';
 import { useEventStatus } from '@/lib/use-event-status';
 import type { Event as ClubEvent, EventStatus } from '@/types';
@@ -71,6 +72,9 @@ export function EventDetailBody({ event, initialStatus }: EventDetailBodyProps) 
 
   return (
     <>
+      {event.sponsorRows && event.sponsorRows.length > 0 && (
+        <SponsorsGrid rows={event.sponsorRows} />
+      )}
       <GoldDivider className="my-16" animate />
       <ScrollReveal>
         {status === 'ongoing' && (
