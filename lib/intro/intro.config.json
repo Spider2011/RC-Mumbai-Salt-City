@@ -1,0 +1,7 @@
+{
+  "sourceDir": "public/images/gallery",
+  "finalPhoto": "58.jpg",
+  "outputDir": "public/intro",
+  "montage": { "smallLongSide": 480, "smallQuality": 60, "mediumLongSide": 800, "mediumQuality": 64 },
+  "final": { "longSide": 1920, "quality": 80 }
+}

@@ -7,7 +7,7 @@ import { SmoothScroll } from '@/components/effects/SmoothScroll';
 import { CustomCursor } from '@/components/effects/CustomCursor';
 import { AmbientMandala } from '@/components/effects/AmbientMandala';
 import { ShlokaEasterEgg } from '@/components/effects/ShlokaEasterEgg';
-import { Loader } from '@/components/effects/Loader';
+import { IntroLoader } from '@/components/intro/IntroLoader';
 import { PageTransition } from '@/components/effects/PageTransition';
 import { ScrollProgressBar } from '@/components/effects/ScrollProgressBar';
 import { GlassNav } from '@/components/ui/GlassNav';
@@ -71,10 +71,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // The intro gate script sets data-intro on <html> before hydration.
+      suppressHydrationWarning
       className={`${cormorant.variable} ${inter.variable} ${spaceGrotesk.variable} ${tiroDevanagari.variable}`}
     >
       <body className="noise relative min-h-dvh">
-        <Loader />
+        <IntroLoader />
         <ScrollProgressBar />
         <CustomCursor />
         <AmbientMandala />
