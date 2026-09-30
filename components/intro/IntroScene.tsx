@@ -150,7 +150,7 @@ export const IntroScene = memo(function IntroScene({ photos }: IntroSceneProps) 
 
       <canvas data-part="fg" className={styles.canvas} aria-hidden />
       <div data-part="grain" className={ghost(styles.grain)} aria-hidden />
-      <div className={styles.vignette} aria-hidden />
+      <div data-part="vignette" className={styles.vignette} aria-hidden />
       <div data-part="bloom" className={ghost(styles.bloom)} aria-hidden />
       <div data-part="curtain" className={ghost(styles.curtain, styles.curtainLeft)} aria-hidden />
       <div data-part="curtain" className={ghost(styles.curtain, styles.curtainRight)} aria-hidden />

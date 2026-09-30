@@ -53,7 +53,7 @@ export function createIntroSound(): IntroSound {
   let droneGain: GainNode | null = null;
   let filter: BiquadFilterNode | null = null;
   let oscs: OscillatorNode[] = [];
-  let bell: OscillatorNode[] = [];
+  let bell: Array<{ osc: OscillatorNode; gain: GainNode }> = [];
   let enabled = false;
 
   function build(): AudioContext | null {
@@ -90,10 +90,14 @@ export function createIntroSound(): IntroSound {
     return ctx;
   }
 
+  /** Fade any ringing partials out over ~0.1s (an instant stop clicks). */
   function stopBell() {
-    bell.forEach((o) => {
+    const now = ctx?.currentTime ?? 0;
+    bell.forEach(({ osc, gain }) => {
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setTargetAtTime(0, now, 0.03);
       try {
-        o.stop();
+        osc.stop(now + 0.2);
       } catch {
         // already stopped
       }
@@ -113,7 +117,7 @@ export function createIntroSound(): IntroSound {
       osc.connect(g).connect(master!);
       osc.start(when);
       osc.stop(when + decay + 0.1);
-      return osc;
+      return { osc, gain: g };
     });
   }
 
@@ -127,8 +131,10 @@ export function createIntroSound(): IntroSound {
       ...oscs.map((o): [AudioParam, 3] => [o.detune, 3]),
     ];
     for (const [param, index] of params) {
+      // Glide from wherever the sound is now (a hard step would click, e.g. on Skip).
       param.cancelScheduledValues(now);
-      param.setValueAtTime(interpolate(at, index), now);
+      param.setValueAtTime(param.value, now);
+      param.linearRampToValueAtTime(interpolate(at, index), now + 0.08);
       for (const key of DRONE_KEYS) if (key[0] > at) param.linearRampToValueAtTime(key[index], toAudio(key[0]));
     }
     stopBell();

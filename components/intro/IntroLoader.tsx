@@ -9,7 +9,7 @@ import { IntroStage } from './IntroStage';
  * hides the server-rendered overlay before first paint (no black flash).
  * Without JavaScript the overlay is never shown at all.
  */
-const GATE_SCRIPT = `try{var p=location.pathname;if(${JSON.stringify(EXCLUDED_PATH_PREFIXES)}.some(function(x){return p.indexOf(x)===0})||sessionStorage.getItem(${JSON.stringify(SESSION_KEY)})==='1')document.documentElement.setAttribute('data-intro','off')}catch(e){}`;
+const GATE_SCRIPT = `try{var p=location.pathname;if(${JSON.stringify(EXCLUDED_PATH_PREFIXES)}.some(function(x){return p===x||p.indexOf(x+'/')===0})||sessionStorage.getItem(${JSON.stringify(SESSION_KEY)})==='1')document.documentElement.setAttribute('data-intro','off')}catch(e){}`;
 const NO_JS_STYLE = '<style>[data-intro-root]{display:none!important}</style>';
 
 export function IntroLoader() {

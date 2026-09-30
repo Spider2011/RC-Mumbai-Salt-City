@@ -1,5 +1,6 @@
 import { applyTreatment, type Treatment } from '@/lib/intro/filters';
-import type { MontagePhoto } from '@/lib/intro/plan';
+import { DENSE_THRESHOLD, type MontagePhoto } from '@/lib/intro/plan';
+import type { DeviceProfile } from './profile';
 
 /**
  * Photo loading for the montage. Loading starts the moment the intro mounts
@@ -63,6 +64,36 @@ export function loadPhotos(o: LoadOptions): PhotoLoader {
       disposed = true;
     },
   };
+}
+
+/** Above this many device pixels on the long side, a card gets the 800px file. */
+const MEDIUM_THRESHOLD_PX = 560;
+
+/**
+ * Starts loading as soon as the stage markup mounts (before fonts or the
+ * animation engine have arrived). Hero moments and large sparse cards get the
+ * 800px file; tunnel frames and phones get the 480px one.
+ */
+export function startPhotoLoading(
+  root: HTMLElement,
+  photos: readonly MontagePhoto[],
+  finalSrc: string,
+  profile: DeviceProfile,
+): PhotoLoader {
+  const imgs = Array.from(root.querySelectorAll<HTMLImageElement>('[data-part="card-img"]'));
+  const finalImg = root.querySelector<HTMLImageElement>('[data-part="final-img"]');
+  if (!finalImg) throw new Error('Intro element missing: final-img');
+  const vmin = Math.min(window.innerWidth, window.innerHeight);
+  const portrait = window.innerHeight >= window.innerWidth;
+  const sparseCard = vmin * (portrait ? 0.56 : 0.46) * Math.min(profile.dpr, 2);
+  return loadPhotos({
+    photos,
+    imgs,
+    finalImg,
+    finalSrc,
+    wantsMedium: (p) => p.hero || (photos.length < DENSE_THRESHOLD && sparseCard > MEDIUM_THRESHOLD_PX),
+    concurrency: profile.mobile ? 4 : 6,
+  });
 }
 
 /**

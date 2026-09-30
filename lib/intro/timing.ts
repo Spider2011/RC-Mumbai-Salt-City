@@ -33,5 +33,6 @@ export const BOOT_GIVE_UP_MS = 11000;
 export const SESSION_KEY = 'rcmsc:intro-seen';
 /** Internal tools never get the intro (the director portal shares the root layout). */
 export const EXCLUDED_PATH_PREFIXES = ['/director'] as const;
-export const isIntroExcluded = (pathname: string) => EXCLUDED_PATH_PREFIXES.some((p) => pathname.startsWith(p));
+export const isIntroExcluded = (pathname: string) =>
+  EXCLUDED_PATH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 export const INTRO_EVENT = 'rcmsc:intro-complete';

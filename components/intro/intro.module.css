@@ -27,6 +27,11 @@
   -webkit-user-select: none;
 }
 
+/* The dialog itself takes focus (to keep Tab off the page behind); its controls show the ring. */
+.root:focus {
+  outline: none;
+}
+
 /* Returning visitor: the gate script hid us before first paint. */
 :global(html[data-intro]) .root {
   display: none;
@@ -65,6 +70,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+/* Layers moved every frame (parallax, camera push) keep their raster instead of repainting. */
+.layer,
+.saltpan,
+.camera {
+  will-change: transform;
 }
 
 .canvas {
@@ -109,13 +121,11 @@
   translate: -50% -50%;
 }
 
-.endGroup {
+/* अस्ति takes अन्त's place at the heart of the loop, fully inside the circle. */
+.endGroup,
+.isGroup {
   top: 50%;
   gap: clamp(2px, 0.6vmin, 8px);
-}
-
-.isGroup {
-  top: calc(50% - var(--ring-r, 25vmin));
 }
 
 .endWordWrap {

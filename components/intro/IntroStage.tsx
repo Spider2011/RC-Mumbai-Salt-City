@@ -13,6 +13,7 @@ import {
   isIntroExcluded,
 } from '@/lib/intro/timing';
 import type { IntroController } from './engine/createIntro';
+import { startPhotoLoading } from './engine/photos';
 import { detectProfile, type DeviceProfile } from './engine/profile';
 import { cinzel, notoSerifDevanagari, waitForIntroFonts } from './fonts';
 import { IntroScene, IntroStatic } from './IntroScene';
@@ -39,6 +40,11 @@ function markIntroSeen(): void {
   } catch {
     // Storage blocked (private mode, policy): the intro may simply play again.
   }
+}
+
+/** Failures never block the site; in development they are still reported. */
+function reportFailure(err: unknown): void {
+  if (process.env.NODE_ENV !== 'production') console.error('[intro] skipped:', err);
 }
 
 /** Don't spend the film on a background tab. */
@@ -80,8 +86,11 @@ export function IntroStage() {
     if (phase !== 'cinematic' || !setup || !root) return;
     let cancelled = false;
     let controller: IntroController | null = null;
+    let loader: ReturnType<typeof startPhotoLoading> | null = null;
     void (async () => {
       try {
+        // Photos start now; the first 6.5s of the film need none of them.
+        loader = startPhotoLoading(root, setup.photos, manifest.final.src, setup.profile);
         // The engine (GSAP + canvas) downloads while the fonts load; returning visitors never fetch it.
         const [{ createIntro }] = await Promise.all([
           import('./engine/createIntro'),
@@ -92,19 +101,22 @@ export function IntroStage() {
         controller = createIntro({
           root,
           photos: setup.photos,
-          finalSrc: manifest.final.src,
+          loader,
           profile: setup.profile,
           onComplete: () => setPhase('done'),
         });
         controllerRef.current = controller;
-      } catch {
+      } catch (err) {
         // Engine failed to load or start (offline, no 2D canvas): never hold the site hostage.
+        reportFailure(err);
+        loader?.dispose();
         if (!cancelled) setPhase('done');
       }
     })();
     return () => {
       cancelled = true;
       controller?.destroy();
+      loader?.dispose();
       controllerRef.current = null;
     };
   }, [phase, setup]);
@@ -126,7 +138,8 @@ export function IntroStage() {
         }, root);
         revert = () => ctx.revert();
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        reportFailure(err);
         if (!cancelled) setPhase('done');
       });
     return () => {
@@ -137,6 +150,8 @@ export function IntroStage() {
 
   useEffect(() => {
     if (phase === 'done') window.dispatchEvent(new CustomEvent(INTRO_EVENT));
+    // Move focus into the dialog so Tab cannot reach links hidden behind it.
+    else if (phase !== 'boot') rootRef.current?.focus({ preventScroll: true });
   }, [phase]);
 
   useEffect(() => {
@@ -156,20 +171,17 @@ export function IntroStage() {
 
   const skip = useCallback(() => controllerRef.current?.skip(), []);
 
-  /** Keep keyboard focus inside the overlay while it covers the page. */
+  /** Keep keyboard focus inside the overlay (on its visible controls) while it covers the page. */
   const trapFocus = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== 'Tab') return;
-    const buttons = Array.from(e.currentTarget.querySelectorAll('button'));
-    if (buttons.length === 0) return;
-    const first = buttons[0];
-    const last = buttons[buttons.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
+    const buttons = Array.from(e.currentTarget.querySelectorAll('button')).filter(
+      (b) => getComputedStyle(b).visibility === 'visible',
+    );
+    const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    e.preventDefault();
+    if (buttons.length === 0) return; // controls not shown yet: focus stays on the dialog
+    const next = index === -1 ? (e.shiftKey ? buttons.length - 1 : 0) : (index + (e.shiftKey ? -1 : 1) + buttons.length) % buttons.length;
+    buttons[next].focus();
   }, []);
 
   if (phase === 'done') return null;
@@ -184,6 +196,7 @@ export function IntroStage() {
       role="dialog"
       aria-modal="true"
       aria-label="Aant Asti Prarambh: The End Is The Beginning. Rotaract Club of Mumbai Salt City, District 3141, Rotary Year 2026–27"
+      tabIndex={-1}
       onKeyDown={trapFocus}
     >
       {phase === 'static' && <IntroStatic />}
@@ -193,7 +206,7 @@ export function IntroStage() {
           <div data-part="ui" className={`${styles.ui} ${styles.ghost}`}>
             <button type="button" className={styles.control} onClick={toggleSound} aria-pressed={soundOn}>
               {soundOn ? <Volume2 aria-hidden className={styles.icon} /> : <VolumeX aria-hidden className={styles.icon} />}
-              <span>{soundOn ? 'Sound on' : 'Sound off'}</span>
+              <span>Sound</span>
             </button>
             <button type="button" className={`${styles.control} ${styles.skip}`} onClick={skip}>
               Skip intro

@@ -35,6 +35,7 @@ export interface Parts {
   clubLetters: HTMLElement[];
   district: HTMLElement;
   grain: HTMLElement;
+  vignette: HTMLElement;
   bloom: HTMLElement;
   curtains: HTMLElement[];
   veil: HTMLElement;
@@ -84,6 +85,7 @@ export function queryParts(root: HTMLElement): Parts {
     clubLetters: all('club-letter'),
     district: one('district'),
     grain: one('grain'),
+    vignette: one('vignette'),
     bloom: one('bloom'),
     curtains: all('curtain'),
     veil: one('veil'),
@@ -91,6 +93,6 @@ export function queryParts(root: HTMLElement): Parts {
   };
   return {
     ...parts,
-    stage: [parts.saltpan, parts.bg, parts.fg, parts.photosLayer, parts.flood, parts.dawn, parts.typeLayer, parts.grain],
+    stage: [parts.saltpan, parts.bg, parts.fg, parts.photosLayer, parts.flood, parts.dawn, parts.typeLayer, parts.grain, parts.vignette],
   };
 }
