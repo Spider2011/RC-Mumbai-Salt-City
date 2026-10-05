@@ -10,6 +10,7 @@ import type { TeamMember } from '@/types';
 export const metadata: Metadata = {
   title: 'Team',
   description: `Core Team ${SITE.year} — ${SITE.name}.`,
+  alternates: { canonical: '/team' },
 };
 
 // Avatars use a CSS background-image (samples the full 640px source — no upscaling blur).

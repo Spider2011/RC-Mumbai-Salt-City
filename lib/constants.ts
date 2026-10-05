@@ -3,6 +3,7 @@
 export const SITE = {
   name: 'Rotaract Club of Mumbai Salt City',
   shortName: 'RCMSC',
+  url: 'https://rcmsc.in',
   district: 'RID 3141',
   year: '2026–27',
   president: 'Tanish Momaya',

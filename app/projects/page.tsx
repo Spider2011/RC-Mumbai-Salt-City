@@ -11,6 +11,7 @@ import { fadeUp } from '@/lib/motion';
 export const metadata: Metadata = {
   title: 'Projects',
   description: `Avenues of service and signature projects — ${SITE.name}.`,
+  alternates: { canonical: '/projects' },
 };
 
 export default function ProjectsPage() {

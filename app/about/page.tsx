@@ -8,6 +8,7 @@ import { SITE } from '@/lib/constants';
 export const metadata: Metadata = {
   title: 'About',
   description: `The story of ${SITE.name} and the philosophy behind ${SITE.theme}.`,
+  alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {

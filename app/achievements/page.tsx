@@ -13,6 +13,7 @@ import type { AchievementGroup, AchievementIcon } from '@/types';
 export const metadata: Metadata = {
   title: 'Achievements',
   description: `Awards, recognitions and nominations of ${SITE.name}.`,
+  alternates: { canonical: '/achievements' },
 };
 
 const ICON: Record<AchievementIcon, typeof Trophy> = {

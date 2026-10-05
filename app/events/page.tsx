@@ -9,6 +9,7 @@ import { SITE } from '@/lib/constants';
 export const metadata: Metadata = {
   title: 'Events',
   description: `Upcoming events and recaps — ${SITE.name}.`,
+  alternates: { canonical: '/events' },
 };
 
 export default function EventsPage() {

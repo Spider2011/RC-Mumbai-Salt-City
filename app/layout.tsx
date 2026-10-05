@@ -44,16 +44,37 @@ const tiroDevanagari = Tiro_Devanagari_Sanskrit({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
+  applicationName: SITE.shortName,
   title: {
-    default: `${SITE.name} · ${SITE.year}`,
+    default: `${SITE.shortName} · ${SITE.name}`,
     template: `%s · ${SITE.shortName}`,
   },
-  description: `${SITE.name} (${SITE.district}). ${SITE.themeTranslation} — ${SITE.theme}. An inclusive hub where ideas become impact.`,
-  keywords: ['Rotaract', 'Mumbai Salt City', 'RID 3141', 'service', 'leadership', SITE.theme],
+  description: `${SITE.shortName} — the ${SITE.name} (${SITE.district}), Mumbai. ${SITE.themeTranslation} — ${SITE.theme}. An inclusive hub where ideas become impact.`,
+  keywords: [
+    SITE.shortName,
+    SITE.name,
+    'Rotaract',
+    'Rotaract Mumbai',
+    'Mumbai Salt City',
+    'RID 3141',
+    'service',
+    'leadership',
+    SITE.theme,
+  ],
   openGraph: {
-    title: `${SITE.name} · ${SITE.year}`,
+    title: `${SITE.shortName} · ${SITE.name}`,
     description: `${SITE.themeTranslation} — ${SITE.theme}`,
+    siteName: SITE.shortName,
+    locale: 'en_IN',
     type: 'website',
+    images: [{ url: '/images/logo.png', width: 256, height: 256, alt: `${SITE.name} logo` }],
+  },
+  twitter: {
+    card: 'summary',
+    title: `${SITE.shortName} · ${SITE.name}`,
+    description: `${SITE.themeTranslation} — ${SITE.theme}`,
+    images: ['/images/logo.png'],
   },
 };
 

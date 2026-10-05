@@ -7,6 +7,7 @@ import { SITE } from '@/lib/constants';
 export const metadata: Metadata = {
   title: 'Gallery',
   description: `Moments frozen in salt — ${SITE.name}.`,
+  alternates: { canonical: '/gallery' },
 };
 
 export default function GalleryPage() {

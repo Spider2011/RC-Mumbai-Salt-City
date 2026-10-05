@@ -7,6 +7,7 @@ import { SITE } from '@/lib/constants';
 export const metadata: Metadata = {
   title: 'Join Us',
   description: `Become a Rotaractor — join ${SITE.name}.`,
+  alternates: { canonical: '/join' },
 };
 
 export default function JoinPage() {
