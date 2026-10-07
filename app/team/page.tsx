@@ -20,7 +20,7 @@ type BoardMember = TeamMember & { focal?: string; zoom?: string };
 
 // Photos live in /public/images/team/ (lowercase, case-safe for Linux/Vercel).
 const BOARD: BoardMember[] = [
-  { name: 'Tanish Momaya', role: 'President', image: '/images/team/tanish.jpg', bio: 'Leading the year of Aant Asti Prarambh.', focal: '51% 15%', zoom: '300%' },
+  { name: 'Tanish Momaya', role: 'President', image: '/images/team/tanish.jpg', bio: 'Leading the year of Aant Asti Prarambh.', focal: '15% 38%', zoom: '130%' },
   { name: 'Kashvi Kothari', role: 'Secretary', image: '/images/team/kashvi.jpg', focal: '40% 13%', zoom: '320%' },
   { name: 'Romil Lodaya', role: 'Vice President', image: '/images/team/romil.jpg', focal: '48% 27%', zoom: '210%' },
   { name: 'Hriday Kataria', role: 'Vice President', image: '/images/team/hriday.jpg', focal: '47% 27%', zoom: '210%' },
