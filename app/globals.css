@@ -283,3 +283,20 @@ body.has-custom-cursor * {
   overflow: hidden;
   line-height: 0;
 }
+
+/* ─── Scroll velocity (set by ScrollVelocity.tsx) ────────────────────────── */
+/* --sv: signed speed in [-1, 1]; --sva: its magnitude. Both rest at 0. */
+@media (prefers-reduced-motion: no-preference) {
+  main img {
+    transform: skewY(calc(var(--sv, 0) * 3deg)) scaleY(calc(1 + var(--sva, 0) * 0.06));
+  }
+  main :is(h1, h2, h3) {
+    text-shadow:
+      calc(var(--sv, 0) * 3px) 0 rgb(255 70 120 / calc(var(--sva, 0) * 0.6)),
+      calc(var(--sv, 0) * -3px) 0 rgb(70 200 255 / calc(var(--sva, 0) * 0.6));
+  }
+  /* Gradient text is transparent, so a shadow would show through the glyphs. */
+  main [class*='text-gradient'] {
+    text-shadow: none;
+  }
+}

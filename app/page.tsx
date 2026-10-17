@@ -5,6 +5,8 @@ import { GallerySection } from '@/components/sections/GallerySection';
 import { CTASection } from '@/components/sections/CTASection';
 import { Footer } from '@/components/sections/Footer';
 import { SanskritMarquee } from '@/components/effects/SanskritMarquee';
+import { EndlessLoop } from '@/components/effects/EndlessLoop';
+import { PaperBoatGuide } from '@/components/effects/boat/PaperBoatGuide';
 import type { Metadata } from 'next';
 import { SITE } from '@/lib/constants';
 
@@ -57,6 +59,8 @@ export default function Home() {
       <GallerySection />
       <CTASection />
       <Footer />
+      <EndlessLoop />
+      <PaperBoatGuide />
     </>
   );
 }

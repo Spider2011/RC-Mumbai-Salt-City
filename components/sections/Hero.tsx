@@ -17,8 +17,15 @@ import {
   scrollIndicator,
 } from '@/lib/motion';
 
-export function Hero() {
+/**
+ * `mirror` renders a non-interactive copy in its settled, scroll-0 state so the
+ * homepage can loop seamlessly from the footer back into the hero.
+ */
+export function Hero({ mirror = false }: { mirror?: boolean }) {
   const reduceMotion = useReducedMotion();
+  const parallax = !reduceMotion && !mirror;
+  const enter = mirror ? false : 'hidden';
+  const Heading = mirror ? motion.p : motion.h1;
   const ref = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -44,7 +51,9 @@ export function Hero() {
     <section
       ref={ref}
       className="relative flex min-h-dvh items-center justify-center overflow-hidden"
-      aria-labelledby="hero-heading"
+      aria-labelledby={mirror ? undefined : 'hero-heading'}
+      aria-hidden={mirror || undefined}
+      inert={mirror}
     >
       {/* Background gradient */}
       <div
@@ -59,9 +68,9 @@ export function Hero() {
       {/* Particle field */}
       <motion.div
         variants={heroParticles}
-        initial="hidden"
+        initial={enter}
         animate="visible"
-        style={reduceMotion ? undefined : { y: particleY }}
+        style={parallax ? { y: particleY } : undefined}
         className="absolute inset-0"
       >
         <ParticleField count={50} className="absolute inset-0" />
@@ -70,9 +79,9 @@ export function Hero() {
       {/* Mandala centerpiece */}
       <motion.div
         variants={heroMandala}
-        initial="hidden"
+        initial={enter}
         animate="visible"
-        style={reduceMotion ? undefined : { y: mandalaY, scale: mandalaScale }}
+        style={parallax ? { y: mandalaY, scale: mandalaScale } : undefined}
         className="pointer-events-none absolute aspect-square w-[min(110vw,900px)] opacity-50"
       >
         <Mandala duration={140} />
@@ -81,9 +90,9 @@ export function Hero() {
       {/* Headline stack */}
       <motion.div
         variants={heroContainer}
-        initial="hidden"
+        initial={enter}
         animate="visible"
-        style={reduceMotion ? undefined : { y: textY, opacity: textOpacity }}
+        style={parallax ? { y: textY, opacity: textOpacity } : undefined}
         className="relative z-10 flex flex-col items-center px-6 text-center"
       >
         <motion.p
@@ -93,15 +102,15 @@ export function Hero() {
           {SITE.themeDevanagari}
         </motion.p>
 
-        <motion.h1
-          id="hero-heading"
+        <Heading
+          id={mirror ? undefined : 'hero-heading'}
           variants={heroHeadline}
           className="font-display text-[clamp(3rem,8vw,7rem)] font-light italic leading-[0.95] text-[var(--text-primary)]"
         >
           The End Is
           <br />
           <span className="text-gradient-sunrise font-normal">The Beginning</span>
-        </motion.h1>
+        </Heading>
 
         <motion.p
           variants={heroSub}
@@ -123,7 +132,7 @@ export function Hero() {
         onClick={scrollToNext}
         aria-label="Scroll to next section"
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
-        initial={{ opacity: 0 }}
+        initial={mirror ? false : { opacity: 0 }}
         animate={{ opacity: 1, transition: { delay: 1.8, duration: 0.8 } }}
       >
         <span className="font-accent text-[0.6rem] uppercase tracking-[0.3em] text-[var(--text-muted)]">
