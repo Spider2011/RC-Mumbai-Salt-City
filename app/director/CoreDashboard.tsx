@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Users, Plus, X } from 'lucide-react';
+import Link from 'next/link';
+import { CalendarCheck, LogOut, Users, Plus, X } from 'lucide-react';
 import type { ProjectReportDetail } from '@/lib/director/schema';
 import type { MemberSession } from '@/lib/director/dal';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -47,6 +48,13 @@ export function CoreDashboard({ member, reports }: Props) {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/director/tracker"
+            className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-white/30 hover:text-[var(--text-primary)]"
+          >
+            <CalendarCheck className="h-4 w-4 text-[var(--accent-gold)]" />
+            Project tracker
+          </Link>
           <button
             type="button"
             onClick={() => setReportOpen(true)}

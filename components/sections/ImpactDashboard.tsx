@@ -7,8 +7,6 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { fadeUp, staggerContainer } from '@/lib/motion';
 import { EVENTS, getEventStatus } from '@/lib/events';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 const GOAL = 100;
 
@@ -52,18 +50,17 @@ export function ImpactDashboard({ embedded = false }: { embedded?: boolean }) {
   );
 
   // "Projects reported" — live count from the director portal (count only).
-  // Refreshes on an interval, on tab focus, and via Supabase Realtime so the
-  // number stays current without a page reload.
+  // Refreshes on an interval and on tab focus so the number stays current
+  // without a page reload.
   const [reported, setReported] = useState(0);
   useEffect(() => {
-    if (!isSupabaseConfigured()) return;
     let active = true;
-    const supabase = createSupabaseBrowserClient();
 
     async function refresh() {
       try {
-        const { data, error } = await supabase.rpc('reported_count');
-        if (active && !error && typeof data === 'number') setReported(data);
+        const res = await fetch('/api/director/reported-count', { cache: 'no-store' });
+        const data = (await res.json()) as { count?: unknown };
+        if (active && res.ok && typeof data.count === 'number') setReported(data.count);
       } catch {
         /* leave the last known value if a refresh fails */
       }
@@ -75,18 +72,11 @@ export function ImpactDashboard({ embedded = false }: { embedded?: boolean }) {
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('focus', refresh);
 
-    // Instant updates when a report is added/removed (respects RLS per viewer).
-    const channel = supabase
-      .channel('impact-reported-count')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_reports' }, refresh)
-      .subscribe();
-
     return () => {
       active = false;
       clearInterval(interval);
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', refresh);
-      supabase.removeChannel(channel);
     };
   }, []);
 

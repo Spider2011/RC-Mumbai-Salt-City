@@ -1,7 +1,10 @@
 import 'server-only';
 import { cache } from 'react';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { db } from '@/lib/firebase/admin';
+import { isFirebaseConfigured } from '@/lib/firebase/config';
+import { SESSION_COOKIE, verifySession } from '@/lib/firebase/session';
 import type { MemberRole } from '@/lib/director/schema';
 
 export interface MemberSession {
@@ -15,34 +18,30 @@ export interface MemberSession {
 }
 
 /**
- * The portal's Data Access Layer. Verifies the Supabase auth session and loads
- * the member's profile (name, avenue, role). Redirects to the login page if
- * there is no valid session, so every caller is guaranteed an authenticated
- * member.
- *
- * `cache` memoizes the result within a single render/request pass so the auth
- * check and profile lookup run at most once per request.
+ * The portal's Data Access Layer. Verifies the Firebase session cookie
+ * (including revocation, so signing out ends the session everywhere) and loads
+ * the member profile from `members/{uid}`. Memoized per request.
  */
-export const getMember = cache(async (): Promise<MemberSession> => {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export const getMemberOrNull = cache(async (): Promise<MemberSession | null> => {
+  if (!isFirebaseConfigured()) return null;
+  const cookie = (await cookies()).get(SESSION_COOKIE)?.value;
+  const decoded = await verifySession(cookie, true);
+  if (!decoded) return null;
 
-  if (!user) redirect('/director/login');
-
-  const { data: profile } = await supabase
-    .from('members')
-    .select('full_name, avenue, role, is_admin')
-    .eq('id', user.id)
-    .single();
-
+  const profile = (await db().collection('members').doc(decoded.uid).get()).data() ?? {};
   return {
-    userId: user.id,
-    email: user.email ?? '',
-    fullName: profile?.full_name ?? user.email ?? 'Member',
-    avenue: profile?.avenue ?? '',
-    role: profile?.role === 'core' ? 'core' : 'director',
-    isAdmin: profile?.is_admin === true,
+    userId: decoded.uid,
+    email: decoded.email ?? '',
+    fullName: typeof profile.fullName === 'string' && profile.fullName ? profile.fullName : decoded.email ?? 'Member',
+    avenue: typeof profile.avenue === 'string' ? profile.avenue : '',
+    role: profile.role === 'core' ? 'core' : 'director',
+    isAdmin: profile.isAdmin === true,
   };
+});
+
+/** Like getMemberOrNull, but sends anyone without a valid session to the login page. */
+export const getMember = cache(async (): Promise<MemberSession> => {
+  const member = await getMemberOrNull();
+  if (!member) redirect('/director/login');
+  return member;
 });

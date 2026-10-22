@@ -28,7 +28,7 @@ export function LoginForm({ configured }: { configured: boolean }) {
 
       {!configured ? (
         <p className="rounded-xl border border-[var(--accent-gold)]/30 bg-[var(--accent-gold)]/[0.06] px-4 py-3 text-sm text-[var(--text-secondary)]">
-          The portal isn&apos;t connected yet. Add the Supabase environment variables and reload.
+          The portal isn&apos;t connected yet. Add the Firebase environment variables and reload.
         </p>
       ) : (
         <form action={action} className="grid gap-5" noValidate>

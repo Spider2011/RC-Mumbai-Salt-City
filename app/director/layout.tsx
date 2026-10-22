@@ -11,9 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function DirectorLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative z-[10] min-h-dvh px-6 py-28">
-      <div className="mx-auto w-full max-w-3xl">{children}</div>
-    </div>
-  );
+  return <div className="relative z-[10] min-h-dvh">{children}</div>;
 }

@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, FileText, ImagePlus, X } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { TextField, TextAreaField, SelectField } from '@/components/ui/FormField';
 import { compressImage, type CompressedImage } from '@/lib/image-upload';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { uploadFile } from '@/lib/director/upload-client';
 import {
   ALLOWED_DOC_ACCEPT,
   ALLOWED_DOC_EXTENSIONS,
@@ -19,7 +19,6 @@ import {
 import type { MemberSession } from '@/lib/director/dal';
 import { submitReport } from './actions';
 
-const STORAGE_BUCKET = 'project-reports';
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
 type FieldErrors = Record<string, string>;
@@ -33,7 +32,6 @@ interface Props {
 /** The "Report a project" form. Used inline by directors and in a modal by core. */
 export function ReportForm({ member, onSaved }: Props) {
   const router = useRouter();
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const defaultAvenue = (AVENUE_OPTIONS as readonly string[]).includes(member.avenue)
     ? (member.avenue as Avenue)
     : '';
@@ -106,27 +104,12 @@ export function ReportForm({ member, onSaved }: Props) {
   }
 
   async function uploadPhotos(): Promise<string[]> {
-    const paths: string[] = [];
+    const ids: string[] = [];
     for (const photo of photos) {
       const blob = await (await fetch(photo.dataUrl)).blob();
-      const path = `${member.userId}/${crypto.randomUUID()}.jpg`;
-      const { error } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
-      if (error) throw new Error(error.message);
-      paths.push(path);
+      ids.push(await uploadFile(blob, photo.name, 'photo'));
     }
-    return paths;
-  }
-
-  async function uploadDoc(file: File): Promise<string> {
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'pdf';
-    const path = `${member.userId}/docs/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
-    if (error) throw new Error(error.message);
-    return path;
+    return ids;
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -143,8 +126,8 @@ export function ReportForm({ member, onSaved }: Props) {
 
     setSubmitting(true);
     try {
-      const docPath = await uploadDoc(reportDoc!);
-      const photoPaths = await uploadPhotos();
+      const docId = await uploadFile(reportDoc!, reportDoc!.name, 'doc');
+      const photoIds = await uploadPhotos();
 
       const fd = new FormData();
       fd.set('title', title);
@@ -153,8 +136,8 @@ export function ReportForm({ member, onSaved }: Props) {
       fd.set('location', location);
       fd.set('beneficiaries', beneficiaries);
       fd.set('description', description);
-      fd.set('reportDoc', docPath);
-      photoPaths.forEach((p) => fd.append('photoPaths', p));
+      fd.set('reportDoc', docId);
+      photoIds.forEach((id) => fd.append('photoIds', id));
 
       const res = await submitReport(fd);
       if (res.ok) {

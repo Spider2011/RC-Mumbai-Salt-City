@@ -54,3 +54,6 @@ next-env.d.ts
 
 # Installation raw originals — only optimized web/ subset committed
 /public/images/Installation/
+
+# Portal login sheets contain passwords — never commit
+RCMSC_Portal_Logins*.xlsx
