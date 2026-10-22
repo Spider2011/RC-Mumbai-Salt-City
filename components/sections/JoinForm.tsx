@@ -45,7 +45,6 @@ export function JoinForm() {
     if (!EMAIL_RE.test(form.email)) next.email = 'Enter a valid email address.';
     if (!PHONE_RE.test(form.phone)) next.phone = 'Enter a valid phone number.';
     if (!form.avenue) next.avenue = 'Choose an avenue that calls to you.';
-    if (form.why.trim().length < 10) next.why = 'A sentence or two, at least.';
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -158,9 +157,8 @@ export function JoinForm() {
               value={form.why}
               onChange={(v) => update('why', v)}
               placeholder="Tell us what draws you to Rotaract..."
-              required
               error={errors.why}
-              hint="A few honest sentences are perfect."
+              hint="Optional, but a few honest sentences help us get to know you."
             />
             <div className="mt-2">
               <GlassButton type="submit" variant="gold" disabled={submitting}>
