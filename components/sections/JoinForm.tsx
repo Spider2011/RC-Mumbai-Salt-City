@@ -11,8 +11,14 @@ import { submitToSheet } from '@/lib/submit-form';
 
 interface FormState {
   name: string;
+  birthDate: string;
   email: string;
   phone: string;
+  gender: string;
+  bloodGroup: string;
+  occupation: string;
+  designation: string;
+  years: string;
   avenue: string;
   why: string;
 }
@@ -21,12 +27,31 @@ type Errors = Partial<Record<keyof FormState, string>>;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+\d][\d\s-]{7,}$/;
+const YEARS_RE = /^\d{1,2}$/;
+
+const GENDERS = ['Male', 'Female', 'Others', 'Prefer not to say'];
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', "Don't know"];
+const WORKING = 'Working Professional';
+const OCCUPATIONS = ['Student', WORKING];
+
+/** `YYYY-MM-DD` (date input) is a real past date after 1920. */
+function isValidBirthDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00`);
+  return !Number.isNaN(date.getTime()) && date < new Date() && date.getFullYear() > 1920;
+}
 
 export function JoinForm() {
   const [form, setForm] = useState<FormState>({
     name: '',
+    birthDate: '',
     email: '',
     phone: '',
+    gender: '',
+    bloodGroup: '',
+    occupation: '',
+    designation: '',
+    years: '',
     avenue: '',
     why: '',
   });
@@ -39,11 +64,19 @@ export function JoinForm() {
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
   }
 
+  const isWorking = form.occupation === WORKING;
+
   function validate(): boolean {
     const next: Errors = {};
     if (!form.name.trim()) next.name = 'Please tell us your name.';
+    if (!isValidBirthDate(form.birthDate)) next.birthDate = 'Enter your date of birth.';
     if (!EMAIL_RE.test(form.email)) next.email = 'Enter a valid email address.';
     if (!PHONE_RE.test(form.phone)) next.phone = 'Enter a valid phone number.';
+    if (!form.gender) next.gender = 'Please choose an option.';
+    if (!form.bloodGroup) next.bloodGroup = 'Choose your blood group, or "Don’t know".';
+    if (!form.occupation) next.occupation = 'Are you a student or working?';
+    if (isWorking && !form.designation.trim()) next.designation = 'What is your designation?';
+    if (!YEARS_RE.test(form.years.trim())) next.years = 'Enter a whole number, e.g. 0 if you are new.';
     if (!form.avenue) next.avenue = 'Choose an avenue that calls to you.';
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -59,8 +92,13 @@ export function JoinForm() {
     try {
       await submitToSheet('Join', {
         name: form.name,
+        birthDate: form.birthDate.replaceAll('-', '/'),
         email: form.email,
         phone: form.phone,
+        gender: form.gender,
+        bloodGroup: form.bloodGroup,
+        occupation: isWorking ? `${WORKING} - ${form.designation.trim()}` : form.occupation,
+        yearsInRotaract: Number(form.years),
         avenue: form.avenue,
         why: form.why,
       });
@@ -112,6 +150,17 @@ export function JoinForm() {
                 error={errors.name}
               />
               <TextField
+                label="Date of birth"
+                name="birthDate"
+                type="date"
+                value={form.birthDate}
+                onChange={(v) => update('birthDate', v)}
+                required
+                error={errors.birthDate}
+              />
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <TextField
                 label="Email"
                 name="email"
                 type="email"
@@ -121,8 +170,6 @@ export function JoinForm() {
                 required
                 error={errors.email}
               />
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2">
               <TextField
                 label="Phone"
                 name="phone"
@@ -132,6 +179,85 @@ export function JoinForm() {
                 placeholder="+91 ..."
                 required
                 error={errors.phone}
+              />
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <SelectField
+                label="Gender"
+                name="gender"
+                value={form.gender}
+                onChange={(v) => update('gender', v)}
+                required
+                error={errors.gender}
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                {GENDERS.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </SelectField>
+              <SelectField
+                label="Blood group"
+                name="bloodGroup"
+                value={form.bloodGroup}
+                onChange={(v) => update('bloodGroup', v)}
+                required
+                error={errors.bloodGroup}
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                {BLOOD_GROUPS.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </SelectField>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <SelectField
+                label="Student / Working professional"
+                name="occupation"
+                value={form.occupation}
+                onChange={(v) => update('occupation', v)}
+                required
+                error={errors.occupation}
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                {OCCUPATIONS.map((o) => (
+                  <option key={o} value={o}>
+                    {o}
+                  </option>
+                ))}
+              </SelectField>
+              {isWorking && (
+                <TextField
+                  label="Designation"
+                  name="designation"
+                  value={form.designation}
+                  onChange={(v) => update('designation', v)}
+                  placeholder="e.g. Software Engineer"
+                  required
+                  error={errors.designation}
+                />
+              )}
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <TextField
+                label="Years in Rotaract"
+                name="years"
+                type="number"
+                value={form.years}
+                onChange={(v) => update('years', v)}
+                placeholder="0"
+                required
+                error={errors.years}
+                hint="Enter 0 if you're new to Rotaract."
               />
               <SelectField
                 label="Avenue of interest"

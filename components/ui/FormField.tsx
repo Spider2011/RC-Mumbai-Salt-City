@@ -13,7 +13,7 @@ interface BaseProps {
 }
 
 interface InputProps extends BaseProps {
-  type?: 'text' | 'email' | 'tel' | 'url' | 'number' | 'password';
+  type?: 'text' | 'email' | 'tel' | 'url' | 'number' | 'password' | 'date';
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -80,7 +80,12 @@ export function TextField({ type = 'text', value, onChange, placeholder, ...rest
         placeholder={placeholder}
         aria-invalid={Boolean(rest.error)}
         onChange={(e) => onChange(e.target.value)}
-        className={cn(fieldClasses, rest.error && 'border-[var(--accent-sunrise-from)]/60')}
+        className={cn(
+          fieldClasses,
+          // Dark native date picker so its calendar icon and popup stay visible.
+          type === 'date' && 'scheme-dark',
+          rest.error && 'border-[var(--accent-sunrise-from)]/60'
+        )}
       />
     </FieldShell>
   );
