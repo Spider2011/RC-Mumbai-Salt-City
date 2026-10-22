@@ -31,7 +31,19 @@ export function LoginForm({ configured }: { configured: boolean }) {
           The portal isn&apos;t connected yet. Add the Firebase environment variables and reload.
         </p>
       ) : (
-        <form action={action} className="grid gap-5" noValidate>
+        <form
+          action={action}
+          // A stale idle timestamp from an earlier visit would sign the new session straight out.
+          onSubmit={() => {
+            try {
+              localStorage.removeItem('rcmsc-portal-last-active');
+            } catch {
+              /* storage blocked */
+            }
+          }}
+          className="grid gap-5"
+          noValidate
+        >
           <TextField
             label="Email"
             name="email"
