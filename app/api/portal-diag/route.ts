@@ -12,6 +12,13 @@ export async function GET() {
     ),
     privateKeyShape: { startsWithQuote: pk.startsWith('"'), hasBeginLine: pk.includes('BEGIN PRIVATE KEY'), literalBackslashN: pk.includes('\\n'), realNewlines: pk.includes('\n') },
   };
+  try {
+    const { createPrivateKey } = await import('node:crypto');
+    createPrivateKey(pk.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n'));
+    out.privateKeyParses = true;
+  } catch {
+    out.privateKeyParses = false;
+  }
   try { await import('server-only'); out.serverOnly = 'ok'; } catch (e) { out.serverOnly = short(e); }
   try { await import('firebase-admin/app'); out.adminApp = 'ok'; } catch (e) { out.adminApp = short(e); }
   try { await import('firebase-admin/auth'); out.adminAuthMod = 'ok'; } catch (e) { out.adminAuthMod = short(e); }

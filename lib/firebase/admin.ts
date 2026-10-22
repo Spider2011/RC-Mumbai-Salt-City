@@ -10,8 +10,8 @@ function app(): App {
   if (!projectId) throw new Error('Firebase is not configured. Set FIREBASE_PROJECT_ID.');
   if (usingEmulators()) return initializeApp({ projectId });
 
-  // Vercel stores the key's newlines as literal "\n".
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  // Accept the key however it was pasted: wrapped in quotes, with literal "\n", or with real line breaks.
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');
   return initializeApp({
     projectId,
     credential: cert({ projectId, clientEmail: process.env.FIREBASE_CLIENT_EMAIL, privateKey }),
