@@ -51,6 +51,17 @@ export const EVENTS: ClubEvent[] = [
     ),
   },
   {
+    id: 'q1-seva',
+    slug: 'seva-mahotsav',
+    title: 'Seva Mahotsav',
+    date: 'July 2026',
+    start: '2026-07-31T00:00:00+05:30',
+    end: '2026-07-31T23:59:59+05:30',
+    avenue: 'Community Service',
+    description:
+      'A community service drive celebrating the spirit of seva, run with the Social Media avenue.',
+  },
+  {
     id: 'e5',
     slug: 'installation-ceremony',
     title: 'Installation Ceremony',
@@ -86,9 +97,20 @@ export const EVENTS: ClubEvent[] = [
     ),
   },
   {
+    id: 'q1-autopilot',
+    slug: 'autopilot-task-2',
+    title: 'Autopilot Task 2',
+    date: 'August 2026',
+    start: '2026-08-31T00:00:00+05:30',
+    end: '2026-08-31T23:59:59+05:30',
+    avenue: 'Secretariat',
+    description:
+      'A Secretariat initiative completed as part of the district Autopilot tasks.',
+  },
+  {
     id: 'e6',
     slug: 'oh-my-friend-ganesha',
-    title: 'Oh My Friend Ganesha',
+    title: 'Oh My Friend Ganesha 10.0',
     date: '14th September 2026',
     start: '2026-09-14T00:00:00+05:30',
     end: '2026-09-14T23:59:59+05:30',
@@ -101,6 +123,39 @@ export const EVENTS: ClubEvent[] = [
       'Register below to be part of the celebration.',
     ],
     location: 'TBA',
+  },
+  {
+    id: 'q1-peace',
+    slug: 'peace-in-every-voice',
+    title: 'Peace in Every Voice — A World Peace Day Initiative',
+    date: '21st September 2026',
+    start: '2026-09-21T00:00:00+05:30',
+    end: '2026-09-21T23:59:59+05:30',
+    avenue: 'International Service',
+    description:
+      'A World Peace Day initiative giving every voice a platform for peace, run with the Social Media avenue.',
+  },
+  {
+    id: 'q1-district-diaries',
+    slug: 'district-diaries-lead-initiative',
+    title: 'District Diaries — Lead Initiative',
+    date: 'September 2026',
+    start: '2026-09-30T00:00:00+05:30',
+    end: '2026-09-30T23:59:59+05:30',
+    avenue: 'HRD',
+    description:
+      'An HRD-led district initiative on leadership and growth.',
+  },
+  {
+    id: 'q1-raas',
+    slug: 'rcmsc-x-raas-utsav',
+    title: 'RCMSC x Raas Utsav',
+    date: 'September 2026',
+    start: '2026-09-30T00:00:00+05:30',
+    end: '2026-09-30T23:59:59+05:30',
+    avenue: 'PR and Marketing',
+    description:
+      'A festive Navratri collaboration celebrating raas and garba with the community.',
   },
   {
     id: 'e7',
